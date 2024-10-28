@@ -1,0 +1,6 @@
+<configuration>
+    <include resource="logback-shared.xml" />
+
+    <logger name="org.testcontainers" level="WARN"/>
+    <logger name="tc" level="WARN"/>
+</configuration>
