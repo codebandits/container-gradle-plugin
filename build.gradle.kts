@@ -44,6 +44,12 @@ testing {
 }
 
 gradlePlugin {
+  plugins {
+    create("container") {
+      id = "dev.codebandits.container"
+      implementationClass = "dev.codebandits.ContainerPlugin"
+    }
+  }
   testSourceSets(
     sourceSets["functionalTest"],
     sourceSets["platformTest"],

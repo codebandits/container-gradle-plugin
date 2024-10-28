@@ -15,53 +15,56 @@ class HelloWorldTest {
   private val gradleBuildFile by lazy { projectDirectory.resolve("build.gradle.kts").createFile() }
 
   @Test
-  fun `hello world`() {
+  fun `helloWorld prints to console`() {
     gradleBuildFile.appendText(
       //language=gradle
       """
-      tasks.register("helloWorld") {
-        doLast {
-          println("Hello world!")
-        }
+      plugins {
+        id("dev.codebandits.container")
       }
       """.trimIndent()
     )
 
     val result = GradleRunner.create()
+      .withPluginClasspath()
       .withProjectDir(projectDirectory.toFile())
       .withArguments("helloWorld")
       .build()
 
     expectThat(result).and {
-      get("the :helloWorld task") { task(":helloWorld") }.isNotNull().get { outcome }.isEqualTo(TaskOutcome.SUCCESS)
-      get { output }.contains("Hello world!")
+      get { task(":helloWorld") }.isNotNull().get { outcome }.isEqualTo(TaskOutcome.SUCCESS)
+      get { output }.contains("Hello, world!")
     }
   }
 
   @Test
-  fun `which docker`() {
+  fun `helloWorld task metadata`() {
     gradleBuildFile.appendText(
       //language=gradle
       """
-      tasks.register("printDockerPath") {
+      plugins {
+        id("dev.codebandits.container")
+      }
+      tasks.register("checkHelloWorldTaskMetadata") {
         doLast {
-          exec {
-            executable = "which"
-            args("docker")
-          }
+          val helloWorldTask = tasks.getByName("helloWorld")
+          println("helloWorld group: " + helloWorldTask.group)
+          println("helloWorld description: " + helloWorldTask.description)
         }
       }
       """.trimIndent()
     )
 
     val result = GradleRunner.create()
+      .withPluginClasspath()
       .withProjectDir(projectDirectory.toFile())
-      .withArguments("printDockerPath")
+      .withArguments("checkHelloWorldTaskMetadata")
       .build()
 
     expectThat(result).and {
-      get { task(":printDockerPath") }.isNotNull().get { outcome }.isEqualTo(TaskOutcome.SUCCESS)
-      get { output }.contains("/usr/local/bin/docker")
+      get { task(":checkHelloWorldTaskMetadata") }.isNotNull().get { outcome }.isEqualTo(TaskOutcome.SUCCESS)
+      get { output }.contains("helloWorld group: example")
+      get { output }.contains("helloWorld description: Prints 'Hello, world!' to the console.")
     }
   }
 }
