@@ -4,14 +4,19 @@ import org.testcontainers.images.builder.ImageFromDockerfile
 import org.testcontainers.images.builder.dockerfile.DockerfileBuilder
 
 object ImageFixtures {
+  private val imageCache = mutableMapOf<Any, ImageFromDockerfile>()
+
   fun dockerTemurin(dockerVersion: String, javaVersion: String): ImageFromDockerfile {
-    return ImageFromDockerfile()
-      .withDockerfileFromBuilder { builder ->
-        builder
-          .from("docker:$dockerVersion-dind")
-          .alpineInstallTemurin(javaVersion = javaVersion)
-          .keepalive()
-      }
+    val imageIdentifier = Triple("docker-temurin", dockerVersion, javaVersion)
+    return imageCache.getOrPut(imageIdentifier) {
+      ImageFromDockerfile()
+        .withDockerfileFromBuilder { builder ->
+          builder
+            .from("docker:$dockerVersion-dind")
+            .alpineInstallTemurin(javaVersion = javaVersion)
+            .keepalive()
+        }
+    }
   }
 
   private fun DockerfileBuilder.alpineInstallTemurin(javaVersion: String): DockerfileBuilder {
