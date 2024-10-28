@@ -17,7 +17,6 @@ class HelloWorldTest {
   @Test
   fun `helloWorld prints to console`() {
     gradleBuildFile.appendText(
-      //language=gradle
       """
       plugins {
         id("dev.codebandits.container")
@@ -40,7 +39,6 @@ class HelloWorldTest {
   @Test
   fun `helloWorld task metadata`() {
     gradleBuildFile.appendText(
-      //language=gradle
       """
       plugins {
         id("dev.codebandits.container")

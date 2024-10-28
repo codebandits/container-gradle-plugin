@@ -24,7 +24,6 @@ class InContainerTest {
     "26, 21",
   )
   fun `run hello world`(dockerVersion: String, javaVersion: String) {
-    //language=gradle
     gradleBuildFile.appendText(
       """
       tasks.register("helloWorld") {
