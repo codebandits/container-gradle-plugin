@@ -21,6 +21,11 @@ testing {
         implementation(project())
         implementation(libs.testcontainers.testcontainers)
       }
+      targets.all {
+        testTask {
+          environment("PROJECT_ROOT", rootDir.absolutePath)
+        }
+      }
     }
 
     withType<JvmTestSuite> {
