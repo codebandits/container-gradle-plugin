@@ -14,6 +14,11 @@ testing {
       dependencies {
         implementation(project())
       }
+      targets.all {
+        testTask {
+          shouldRunAfter("test")
+        }
+      }
     }
 
     register<JvmTestSuite>("platformTest") {
@@ -24,6 +29,7 @@ testing {
       targets.all {
         testTask {
           environment("PROJECT_ROOT", rootDir.absolutePath)
+          shouldRunAfter("test", "functionalTest")
         }
       }
     }
