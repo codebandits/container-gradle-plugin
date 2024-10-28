@@ -1,7 +1,8 @@
 package dev.codebandits
 
-import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
+import strikt.api.expectThat
+import strikt.assertions.isEqualTo
 
 class BusinessLogicTest {
 
@@ -9,6 +10,6 @@ class BusinessLogicTest {
 
   @Test
   fun testSum() {
-    assertEquals(businessLogic.sum(40, 2), 42)
+    expectThat(businessLogic.sum(40, 2)).isEqualTo(42)
   }
 }

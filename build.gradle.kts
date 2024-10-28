@@ -15,6 +15,9 @@ testing {
 
     withType<JvmTestSuite> {
       useJUnitJupiter(libs.versions.junit.jupiter)
+      dependencies {
+        implementation(libs.strikt.core)
+      }
     }
   }
 }

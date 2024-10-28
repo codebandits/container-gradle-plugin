@@ -1,6 +1,10 @@
 [versions]
 kotlin = "2.0.21" # https://github.com/JetBrains/kotlin/releases/latest
 junit-jupiter = "5.11.2" # https://github.com/junit-team/junit5/releases
+strikt = "0.35.1" # https://github.com/robfletcher/strikt/releases
+
+[libraries]
+strikt-core = { module = "io.strikt:strikt-core", version.ref = "strikt" }
 
 [plugins]
 kotlinJvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }

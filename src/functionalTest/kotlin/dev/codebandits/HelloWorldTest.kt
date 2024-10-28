@@ -2,9 +2,9 @@ package dev.codebandits
 
 import org.gradle.testkit.runner.GradleRunner
 import org.gradle.testkit.runner.TaskOutcome
-import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
+import strikt.api.*
+import strikt.assertions.*
 import kotlin.io.path.appendText
 import kotlin.io.path.createFile
 import kotlin.io.path.createTempDirectory
@@ -31,7 +31,8 @@ class HelloWorldTest {
       .withArguments("helloWorld")
       .build()
 
-    assertEquals(TaskOutcome.SUCCESS, result.task(":helloWorld")?.outcome)
-    assertTrue(result.output.contains("Hello world!"))
+    expectThat(result.task(":helloWorld")).isNotNull()
+      .get { outcome }.isEqualTo(TaskOutcome.SUCCESS)
+    expectThat(result.output).contains("Hello world!")
   }
 }
