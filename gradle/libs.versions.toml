@@ -2,9 +2,11 @@
 kotlin = "2.0.21" # https://github.com/JetBrains/kotlin/releases/latest
 junit-jupiter = "5.11.2" # https://github.com/junit-team/junit5/releases
 strikt = "0.35.1" # https://github.com/robfletcher/strikt/releases
+testcontainers = "1.20.3" # https://github.com/testcontainers/testcontainers-java/releases
 
 [libraries]
 strikt-core = { module = "io.strikt:strikt-core", version.ref = "strikt" }
+testcontainers-testcontainers = { module = "org.testcontainers:testcontainers", version.ref = "testcontainers" }
 
 [plugins]
 kotlinJvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }

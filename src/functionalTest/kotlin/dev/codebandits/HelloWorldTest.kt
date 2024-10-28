@@ -64,5 +64,4 @@ class HelloWorldTest {
       get { output }.contains("/usr/local/bin/docker")
     }
   }
-  }
 }

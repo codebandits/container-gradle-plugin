@@ -13,6 +13,13 @@ testing {
       }
     }
 
+    register<JvmTestSuite>("platformTest") {
+      dependencies {
+        implementation(project())
+        implementation(libs.testcontainers.testcontainers)
+      }
+    }
+
     withType<JvmTestSuite> {
       useJUnitJupiter(libs.versions.junit.jupiter)
       dependencies {
@@ -23,10 +30,16 @@ testing {
 }
 
 gradlePlugin {
-  testSourceSets(sourceSets["functionalTest"])
+  testSourceSets(
+    sourceSets["functionalTest"],
+    sourceSets["platformTest"],
+  )
 }
 
 tasks.named("check") {
   @Suppress("UnstableApiUsage")
-  dependsOn(testing.suites.named("functionalTest"))
+  dependsOn(
+    testing.suites.named("functionalTest"),
+    testing.suites.named("platformTest"),
+  )
 }
