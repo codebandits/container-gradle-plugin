@@ -15,8 +15,9 @@ class HelloWorldTest {
   private val gradleBuildFile by lazy { projectDirectory.resolve("build.gradle.kts").createFile() }
 
   @Test
-  fun `run hello world`() {
+  fun `hello world`() {
     gradleBuildFile.appendText(
+      //language=gradle
       """
       tasks.register("helloWorld") {
         doLast {
@@ -31,8 +32,37 @@ class HelloWorldTest {
       .withArguments("helloWorld")
       .build()
 
-    expectThat(result.task(":helloWorld")).isNotNull()
-      .get { outcome }.isEqualTo(TaskOutcome.SUCCESS)
-    expectThat(result.output).contains("Hello world!")
+    expectThat(result).and {
+      get("the :helloWorld task") { task(":helloWorld") }.isNotNull().get { outcome }.isEqualTo(TaskOutcome.SUCCESS)
+      get { output }.contains("Hello world!")
+    }
+  }
+
+  @Test
+  fun `which docker`() {
+    gradleBuildFile.appendText(
+      //language=gradle
+      """
+      tasks.register("printDockerPath") {
+        doLast {
+          exec {
+            executable = "which"
+            args("docker")
+          }
+        }
+      }
+      """.trimIndent()
+    )
+
+    val result = GradleRunner.create()
+      .withProjectDir(projectDirectory.toFile())
+      .withArguments("printDockerPath")
+      .build()
+
+    expectThat(result).and {
+      get { task(":printDockerPath") }.isNotNull().get { outcome }.isEqualTo(TaskOutcome.SUCCESS)
+      get { output }.contains("/usr/local/bin/docker")
+    }
+  }
   }
 }
