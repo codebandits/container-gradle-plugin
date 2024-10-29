@@ -1,6 +1,5 @@
 package dev.codebandits
 
-import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
 
@@ -12,12 +11,11 @@ public abstract class ContainerRunTask : ContainerExecTask() {
       objects.property(Array<String>::class.java).convention(emptyArray())
     public val containerArgs: Property<Array<String>> =
       objects.property(Array<String>::class.java).convention(emptyArray())
-    public val workdir: DirectoryProperty = objects.directoryProperty()
+    public val workdir: Property<String> = objects.property(String::class.java)
     public val user: Property<String> = objects.property(String::class.java)
     public val autoRemove: Property<Boolean> = objects.property(Boolean::class.java).convention(true)
     public val alwaysPull: Property<Boolean> = objects.property(Boolean::class.java).convention(true)
-    public val dockerHost: Property<String> =
-      objects.property(String::class.java).convention("unix:///var/run/docker.sock")
+    public val dockerHost: Property<String> = objects.property(String::class.java)
   }
 
   public fun dockerRun(configure: DockerRunSpec.() -> Unit) {
@@ -39,9 +37,9 @@ public abstract class ContainerRunTask : ContainerExecTask() {
     if (entrypoint != null) {
       options.addAll(listOf("--entrypoint", entrypoint))
     }
-    val workdirPath = spec.workdir.orNull?.asFile?.absolutePath
-    if (workdirPath != null) {
-      options.addAll(listOf("--volume", "$workdirPath:/workdir", "--workdir", "/workdir"))
+    val workdir = spec.workdir.orNull
+    if (workdir != null) {
+      options.addAll(listOf("--workdir", workdir))
     }
     val dockerArgs = arrayOf("run", *options.toTypedArray(), image, *containerArgs)
     actionSteps.add(
@@ -49,7 +47,10 @@ public abstract class ContainerRunTask : ContainerExecTask() {
         execAction = {
           executable = Commands.dockerPath
           args(*dockerArgs)
-          environment("DOCKER_HOST", spec.dockerHost.get())
+          val dockerHost = spec.dockerHost.orNull
+          if (dockerHost != null) {
+            environment("DOCKER_HOST", dockerHost)
+          }
         },
       )
     )

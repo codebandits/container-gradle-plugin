@@ -9,6 +9,7 @@ import strikt.assertions.isTrue
 import java.io.BufferedReader
 import java.io.InputStreamReader
 import java.util.UUID
+import kotlin.io.path.absolutePathString
 
 class DockerRunAutoRemoveTest : GradleProjectTest() {
   @Test
@@ -28,7 +29,10 @@ class DockerRunAutoRemoveTest : GradleProjectTest() {
             image = "alpine:latest"
             entrypoint = "echo"
             containerArgs = arrayOf("$uuid")
-            workdir = layout.projectDirectory
+            workdir = "/workdir"
+            volumes = arrayOf(
+              "${'$'}{layout.projectDirectory}:/workdir",
+            )
           }
         }
       }
@@ -63,7 +67,10 @@ class DockerRunAutoRemoveTest : GradleProjectTest() {
             image = "alpine:latest"
             entrypoint = "echo"
             containerArgs = arrayOf("$uuid")
-            workdir = layout.projectDirectory
+            workdir = "/workdir"
+            volumes = arrayOf(
+              "${'$'}{layout.projectDirectory}:/workdir",
+            )
             autoRemove = true
           }
         }
@@ -99,7 +106,10 @@ class DockerRunAutoRemoveTest : GradleProjectTest() {
             image = "alpine:latest"
             entrypoint = "echo"
             containerArgs = arrayOf("$uuid")
-            workdir = layout.projectDirectory
+            workdir = "/workdir"
+            volumes = arrayOf(
+              "${'$'}{layout.projectDirectory}:/workdir",
+            )
             autoRemove = false
           }
         }

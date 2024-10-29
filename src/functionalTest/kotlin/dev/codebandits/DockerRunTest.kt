@@ -180,7 +180,10 @@ class DockerRunTest : GradleProjectTest() {
               "-c",
               "printf 'Be sure to drink your Ovaltine' > secret-message.txt",
             )
-            workdir = layout.projectDirectory
+            workdir = "/workdir"
+            volumes = arrayOf(
+              "${'$'}{layout.projectDirectory}:/workdir",
+            )
           }
         }
       }
