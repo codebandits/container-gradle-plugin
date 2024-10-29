@@ -8,9 +8,9 @@ import kotlin.io.path.createTempDirectory
 import kotlin.io.path.notExists
 
 abstract class GradleProjectTest {
-  protected val projectDirectory by lazy { createTempDirectory(prefix = "test-") }
-  protected val gradleBuildFile by lazy { projectDirectory.resolve("build.gradle.kts").createFile() }
-  protected val gradleSettingsFile by lazy { projectDirectory.resolve("settings.gradle.kts").createFile() }
+  val projectDirectory by lazy { createTempDirectory(prefix = "test-") }
+  val gradleBuildFile by lazy { projectDirectory.resolve("build.gradle.kts").createFile() }
+  val gradleSettingsFile by lazy { projectDirectory.resolve("settings.gradle.kts").createFile() }
 
   @AfterEach
   fun cleanupProjectDirectory() {

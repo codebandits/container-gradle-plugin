@@ -13,8 +13,7 @@ public abstract class ContainerRunTask : ContainerExecTask() {
     public val workdir: DirectoryProperty = objects.directoryProperty()
     public val autoRemove: Property<Boolean> = objects.property(Boolean::class.java).convention(true)
     public val alwaysPull: Property<Boolean> = objects.property(Boolean::class.java).convention(true)
-    public val daemonSocketPath: Property<String> =
-      objects.property(String::class.java).convention("/var/run/docker.sock")
+    public val daemonSocketPath: Property<String> = objects.property(String::class.java)
   }
 
   public fun dockerRun(configure: DockerRunSpec.() -> Unit) {
@@ -25,8 +24,7 @@ public abstract class ContainerRunTask : ContainerExecTask() {
     if (spec.autoRemove.get()) {
       options.add("--rm")
     }
-    val daemonSocketPath = spec.daemonSocketPath.get()
-    options.addAll(listOf("--volume", "$daemonSocketPath:/var/run/docker.sock"))
+    val daemonSocketPath = spec.daemonSocketPath.orNull
     val entrypoint = spec.entrypoint.orNull
     if (entrypoint != null) {
       options.addAll(listOf("--entrypoint", entrypoint))
@@ -41,6 +39,9 @@ public abstract class ContainerRunTask : ContainerExecTask() {
         execAction = {
           executable = Commands.dockerPath
           args(*dockerArgs)
+          if (daemonSocketPath != null) {
+            environment("DOCKER_HOST", "unix://$daemonSocketPath")
+          }
         },
       )
     )

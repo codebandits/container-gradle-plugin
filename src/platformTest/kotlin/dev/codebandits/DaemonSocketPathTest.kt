@@ -2,8 +2,7 @@ package dev.codebandits
 
 import dev.codebandits.helpers.appendLine
 import dev.codebandits.helpers.setupPluginIncludedBuild
-import org.junit.jupiter.params.ParameterizedTest
-import org.junit.jupiter.params.provider.CsvSource
+import org.junit.jupiter.api.Test
 import org.testcontainers.containers.BindMode
 import org.testcontainers.containers.GenericContainer
 import org.testcontainers.utility.MountableFile
@@ -11,14 +10,11 @@ import strikt.api.expectThat
 import strikt.assertions.contains
 import strikt.assertions.isEqualTo
 
-class InContainerTest : GradleProjectTest() {
+class DaemonSocketPathTest : GradleProjectTest() {
 
-  @ParameterizedTest(name = "run dockerRun using docker {0} java {1} gradle {2}")
-  @CsvSource(
-    "27, 22, 8.10.2",
-    "26, 21, 7.6.4",
-  )
-  fun `run dockerRun`(dockerVersion: String, javaVersion: String, gradleVersion: String) {
+  @Test
+  fun `use a custom daemon socket path`() {
+    val daemonSocketPath = "/var/run/container.sock"
     gradleSettingsFile.appendLine("rootProject.name = \"platform-testing\"")
     setupPluginIncludedBuild()
     gradleBuildFile.appendLine(
@@ -32,24 +28,24 @@ class InContainerTest : GradleProjectTest() {
       tasks {
         register<ContainerRunTask>("helloWorld") {
           dockerRun {
-            // setter syntax required for older versions of gradle
-            image.set("alpine:latest")
-            entrypoint.set("echo")
-            containerArgs.set(arrayOf("Hello, world!"))
+            image = "alpine:latest"
+            entrypoint = "echo"
+            containerArgs = arrayOf("Hello, world!")
+            daemonSocketPath = "$daemonSocketPath"
           }
         }
       }
       """.trimIndent()
     )
-    setupGradleWrapper(gradleVersion = gradleVersion)
+    setupGradleWrapper(gradleVersion = "8.10.2")
 
     val image = ImageFixtures.dockerTemurin(
-      dockerVersion = dockerVersion,
-      javaVersion = javaVersion,
+      dockerVersion = "27",
+      javaVersion = "21",
     )
     val container = GenericContainer(image)
       .withPrivilegedMode(true)
-      .withFileSystemBind("/var/run/docker.sock", "/var/run/docker.sock", BindMode.READ_ONLY)
+      .withFileSystemBind("/var/run/docker.sock", daemonSocketPath, BindMode.READ_ONLY)
       .withCopyFileToContainer(MountableFile.forHostPath(projectDirectory), "/project")
       .withWorkingDirectory("/project")
       .withCommand("tail", "-f", "/dev/null")
