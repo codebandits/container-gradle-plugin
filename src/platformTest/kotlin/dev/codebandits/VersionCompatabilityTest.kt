@@ -11,7 +11,7 @@ import strikt.api.expectThat
 import strikt.assertions.contains
 import strikt.assertions.isEqualTo
 
-class InContainerTest : GradleProjectTest() {
+class VersionCompatabilityTest : GradleProjectTest() {
 
   @ParameterizedTest(name = "run dockerRun using docker {0} java {1} gradle {2}")
   @CsvSource(
