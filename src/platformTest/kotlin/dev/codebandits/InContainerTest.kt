@@ -1,9 +1,9 @@
 package dev.codebandits
 
 import dev.codebandits.helpers.appendLine
-import org.gradle.testkit.runner.GradleRunner
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.CsvSource
+import org.testcontainers.containers.BindMode
 import org.testcontainers.containers.GenericContainer
 import org.testcontainers.utility.MountableFile
 import strikt.api.expectThat
@@ -11,27 +11,34 @@ import strikt.assertions.contains
 import strikt.assertions.isEqualTo
 import java.io.File
 import kotlin.io.path.createDirectory
-import kotlin.io.path.createFile
-import kotlin.io.path.createTempDirectory
-import kotlin.io.path.notExists
 
-class InContainerTest {
-  private val projectDirectory by lazy { createTempDirectory(prefix = "test-") }
-  private val gradleBuildFile by lazy { projectDirectory.resolve("build.gradle.kts").createFile() }
-  private val gradleSettingsFile by lazy { projectDirectory.resolve("settings.gradle.kts").createFile() }
+class InContainerTest : GradleProjectTest() {
 
-  @ParameterizedTest(name = "run helloWorld with docker {0} java {1} gradle {2}")
+  @ParameterizedTest(name = "run dockerRun using docker {0} java {1} gradle {2}")
   @CsvSource(
     "27, 22, 8.10.2",
     "26, 21, 7.6.4",
   )
-  fun `run helloWorld`(dockerVersion: String, javaVersion: String, gradleVersion: String) {
+  fun `run dockerRun`(dockerVersion: String, javaVersion: String, gradleVersion: String) {
     gradleSettingsFile.appendLine("rootProject.name = \"platform-testing\"")
     setupPluginIncludedBuild()
     gradleBuildFile.appendLine(
       """
+      import dev.codebandits.ContainerRunTask
+      
       plugins {
         id("dev.codebandits.container")
+      }
+      
+      tasks {
+        register<ContainerRunTask>("helloWorld") {
+          dockerRun {
+            // setter syntax required for older versions of gradle
+            image.set("alpine:latest")
+            entrypoint.set("echo")
+            containerArgs.set(arrayOf("Hello, world!"))
+          }
+        }
       }
       """.trimIndent()
     )
@@ -42,6 +49,8 @@ class InContainerTest {
       javaVersion = javaVersion,
     )
     val container = GenericContainer(image)
+      .withPrivilegedMode(true)
+      .withFileSystemBind("/var/run/docker.sock", "/var/run/docker.sock", BindMode.READ_ONLY)
       .withCopyFileToContainer(MountableFile.forHostPath(projectDirectory), "/project")
       .withWorkingDirectory("/project")
       .withCommand("tail", "-f", "/dev/null")
@@ -58,18 +67,6 @@ class InContainerTest {
         get { exitCode }.isEqualTo(0)
       }
     }
-  }
-
-  private fun setupGradleWrapper(gradleVersion: String) {
-    if (gradleBuildFile.notExists()) {
-      gradleBuildFile.createFile()
-    }
-    GradleRunner.create()
-      .withGradleVersion(gradleVersion)
-      .withProjectDir(projectDirectory.toFile())
-      .withArguments("wrapper")
-      .withPluginClasspath()
-      .build()
   }
 
   private fun setupPluginIncludedBuild() {

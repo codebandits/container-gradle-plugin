@@ -1,10 +1,23 @@
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat
 import org.gradle.api.tasks.testing.logging.TestLogEvent
+import org.gradle.kotlin.dsl.invoke
 
 plugins {
   `java-gradle-plugin`
   `jvm-test-suite`
   alias(libs.plugins.kotlinJvm)
+}
+
+kotlin {
+  explicitApi()
+}
+
+sourceSets {
+  create("sharedTest")
+}
+
+dependencies {
+  "sharedTestApi"(libs.junit.jupiter.api)
 }
 
 testing {
@@ -13,6 +26,7 @@ testing {
     register<JvmTestSuite>("functionalTest") {
       dependencies {
         implementation(project())
+        implementation(sourceSets["sharedTest"].output)
       }
       targets.all {
         testTask {
@@ -24,6 +38,7 @@ testing {
     register<JvmTestSuite>("platformTest") {
       dependencies {
         implementation(project())
+        implementation(sourceSets["sharedTest"].output)
         implementation(libs.testcontainers.testcontainers)
       }
       targets.all {
@@ -64,6 +79,7 @@ gradlePlugin {
   testSourceSets(
     sourceSets["functionalTest"],
     sourceSets["platformTest"],
+    sourceSets["sharedTest"],
   )
 }
 

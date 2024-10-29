@@ -11,6 +11,7 @@ strikt-core = { module = "io.strikt:strikt-core", version.ref = "strikt" }
 testcontainers-testcontainers = { module = "org.testcontainers:testcontainers", version.ref = "testcontainers" }
 logback = { module = "ch.qos.logback:logback-classic", version.ref = "logback" }
 slf4j-api = { module = "org.slf4j:slf4j-api", version.ref = "slf4j" }
+junit-jupiter-api = { module = "org.junit.jupiter:junit-jupiter-api", version.ref = "junit-jupiter" }
 
 [bundles]
 logging-implementation = ["slf4j-api"]
