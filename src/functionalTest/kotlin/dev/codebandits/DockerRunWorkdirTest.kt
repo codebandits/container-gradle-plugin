@@ -16,7 +16,7 @@ class DockerRunWorkdirTest : GradleProjectTest() {
 
   @Test
   fun `dockerRun workdir is set to an existing directory`() {
-    gradleBuildFile.appendLine(
+    buildGradleKtsFile.appendLine(
       """
       import dev.codebandits.ContainerRunTask
       
@@ -56,7 +56,7 @@ class DockerRunWorkdirTest : GradleProjectTest() {
 
   @Test
   fun `dockerRun workdir is set to a non-existent directory`() {
-    gradleBuildFile.appendLine(
+    buildGradleKtsFile.appendLine(
       """
       import dev.codebandits.ContainerRunTask
       
@@ -93,7 +93,7 @@ class DockerRunWorkdirTest : GradleProjectTest() {
     val inputDirectory = projectDirectory.resolve("inputs").createDirectory()
     inputDirectory.resolve("input.txt").createFile().appendLine("wild horses")
 
-    gradleBuildFile.appendLine(
+    buildGradleKtsFile.appendLine(
       """
       import dev.codebandits.ContainerRunTask
       

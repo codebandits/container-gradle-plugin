@@ -18,7 +18,7 @@ class DockerRunTest : GradleProjectTest() {
 
   @Test
   fun `dockerRun uses the specified image`() {
-    gradleBuildFile.appendLine(
+    buildGradleKtsFile.appendLine(
       """
       import dev.codebandits.ContainerRunTask
       
@@ -52,7 +52,7 @@ class DockerRunTest : GradleProjectTest() {
 
   @Test
   fun `dockerRun reports successful task status`() {
-    gradleBuildFile.appendLine(
+    buildGradleKtsFile.appendLine(
       """
       import dev.codebandits.ContainerRunTask
       
@@ -82,7 +82,7 @@ class DockerRunTest : GradleProjectTest() {
 
   @Test
   fun `dockerRun reports failed task status`() {
-    gradleBuildFile.appendLine(
+    buildGradleKtsFile.appendLine(
       """
       import dev.codebandits.ContainerRunTask
       
@@ -116,7 +116,7 @@ class DockerRunTest : GradleProjectTest() {
 
   @Test
   fun `dockerRun streams stdout and stderr separately`() {
-    gradleBuildFile.appendLine(
+    buildGradleKtsFile.appendLine(
       """
       import dev.codebandits.ContainerRunTask
       
@@ -163,7 +163,7 @@ class DockerRunTest : GradleProjectTest() {
 
   @Test
   fun `dockerRun uses a provided workdir`() {
-    gradleBuildFile.appendLine(
+    buildGradleKtsFile.appendLine(
       """
       import dev.codebandits.ContainerRunTask
       

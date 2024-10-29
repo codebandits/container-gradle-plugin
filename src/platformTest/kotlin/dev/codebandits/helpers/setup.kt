@@ -14,5 +14,5 @@ internal fun GradleProjectTest.setupPluginIncludedBuild() {
   hostProjectRoot.resolve("gradle/libs.versions.toml")
     .copyTo(includedBuildDirectory.resolve("gradle/libs.versions.toml").toFile())
   hostProjectRoot.resolve("src/main").copyRecursively(includedBuildDirectory.resolve("src/main").toFile())
-  gradleSettingsFile.appendLine("includeBuild(\"gradle-container-plugin\")")
+  settingsGradleKtsFile.appendLine("includeBuild(\"gradle-container-plugin\")")
 }

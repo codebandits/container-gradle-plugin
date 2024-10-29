@@ -13,7 +13,7 @@ class DockerRunSocketMountTest : GradleProjectTest() {
 
   @Test
   fun `dockerRun volumes can be used to mount the docker socket`() {
-    gradleBuildFile.appendLine(
+    buildGradleKtsFile.appendLine(
       """
       import dev.codebandits.ContainerRunTask
       

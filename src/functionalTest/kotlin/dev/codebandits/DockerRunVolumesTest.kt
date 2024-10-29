@@ -19,7 +19,7 @@ class DockerRunVolumesTest : GradleProjectTest() {
     val inputFile = projectDirectory.resolve("input.txt").createFile()
     inputFile.appendLine("wild horses")
 
-    gradleBuildFile.appendLine(
+    buildGradleKtsFile.appendLine(
       """
       import dev.codebandits.ContainerRunTask
       
@@ -59,7 +59,7 @@ class DockerRunVolumesTest : GradleProjectTest() {
     val inputDirectory = projectDirectory.resolve("inputs").createDirectory()
     inputDirectory.resolve("input.txt").createFile().appendLine("wild horses")
 
-    gradleBuildFile.appendLine(
+    buildGradleKtsFile.appendLine(
       """
       import dev.codebandits.ContainerRunTask
       
@@ -103,7 +103,7 @@ class DockerRunVolumesTest : GradleProjectTest() {
     val input3File = projectDirectory.resolve("input-3.txt").createFile()
     input3File.appendLine("could not keep me away")
 
-    gradleBuildFile.appendLine(
+    buildGradleKtsFile.appendLine(
       """
       import dev.codebandits.ContainerRunTask
       

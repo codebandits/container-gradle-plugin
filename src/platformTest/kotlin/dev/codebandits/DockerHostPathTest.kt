@@ -16,7 +16,7 @@ class DockerHostPathTest : GradleProjectTest() {
   @Test
   fun `dockerRun uses a custom socket when dockerHost is set`() {
     setupPluginIncludedBuild()
-    gradleBuildFile.appendLine(
+    buildGradleKtsFile.appendLine(
       """
       import dev.codebandits.ContainerRunTask
       
@@ -63,7 +63,7 @@ class DockerHostPathTest : GradleProjectTest() {
   @Test
   fun `dockerRun fails when a non-existent dockerHost is set`() {
     setupPluginIncludedBuild()
-    gradleBuildFile.appendLine(
+    buildGradleKtsFile.appendLine(
       """
       import dev.codebandits.ContainerRunTask
       

@@ -19,9 +19,9 @@ class VersionCompatabilityTest : GradleProjectTest() {
     "26, 21, 7.6.4",
   )
   fun `run dockerRun`(dockerVersion: String, javaVersion: String, gradleVersion: String) {
-    gradleSettingsFile.appendLine("rootProject.name = \"platform-testing\"")
+    settingsGradleKtsFile.appendLine("rootProject.name = \"platform-testing\"")
     setupPluginIncludedBuild()
-    gradleBuildFile.appendLine(
+    buildGradleKtsFile.appendLine(
       """
       import dev.codebandits.ContainerRunTask
       

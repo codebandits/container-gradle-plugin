@@ -9,13 +9,12 @@ import strikt.assertions.isTrue
 import java.io.BufferedReader
 import java.io.InputStreamReader
 import java.util.UUID
-import kotlin.io.path.absolutePathString
 
 class DockerRunAutoRemoveTest : GradleProjectTest() {
   @Test
   fun `dockerRun removes containers by default`() {
     val uuid = UUID.randomUUID().toString()
-    gradleBuildFile.appendLine(
+    buildGradleKtsFile.appendLine(
       """
       import dev.codebandits.ContainerRunTask
       
@@ -53,7 +52,7 @@ class DockerRunAutoRemoveTest : GradleProjectTest() {
   @Test
   fun `dockerRun removes containers when autoRemove is true`() {
     val uuid = UUID.randomUUID().toString()
-    gradleBuildFile.appendLine(
+    buildGradleKtsFile.appendLine(
       """
       import dev.codebandits.ContainerRunTask
       
@@ -92,7 +91,7 @@ class DockerRunAutoRemoveTest : GradleProjectTest() {
   @Test
   fun `dockerRun preserves containers when autoRemove is false`() {
     val uuid = UUID.randomUUID().toString()
-    gradleBuildFile.appendLine(
+    buildGradleKtsFile.appendLine(
       """
       import dev.codebandits.ContainerRunTask
       
