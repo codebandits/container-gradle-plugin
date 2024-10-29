@@ -36,11 +36,10 @@ class DockerHostPathTest : GradleProjectTest() {
       }
       """.trimIndent()
     )
-    setupGradleWrapper(gradleVersion = "8.10.2")
-
-    val image = ImageFixtures.dockerTemurin(
+    val image = ImageFixtures.dockerTemurinGradle(
       dockerVersion = "27",
       javaVersion = "21",
+      gradleVersion = "8.10.2",
     )
     val container = GenericContainer(image)
       .withPrivilegedMode(true)
@@ -51,7 +50,7 @@ class DockerHostPathTest : GradleProjectTest() {
 
     val execResult = try {
       container.start()
-      container.execInContainer("./gradlew", "helloWorld")
+      container.execInContainer("gradle", "helloWorld")
     } finally {
       container.stop()
     }
@@ -83,11 +82,11 @@ class DockerHostPathTest : GradleProjectTest() {
       }
       """.trimIndent()
     )
-    setupGradleWrapper(gradleVersion = "8.10.2")
 
-    val image = ImageFixtures.dockerTemurin(
+    val image = ImageFixtures.dockerTemurinGradle(
       dockerVersion = "27",
       javaVersion = "21",
+      gradleVersion = "8.10.2",
     )
     val container = GenericContainer(image)
       .withPrivilegedMode(true)
@@ -98,7 +97,7 @@ class DockerHostPathTest : GradleProjectTest() {
 
     val execResult = try {
       container.start()
-      container.execInContainer("./gradlew", "echo")
+      container.execInContainer("gradle", "echo")
     } finally {
       container.stop()
     }

@@ -79,7 +79,6 @@ gradlePlugin {
   testSourceSets(
     sourceSets["functionalTest"],
     sourceSets["platformTest"],
-    sourceSets["sharedTest"],
   )
 }
 

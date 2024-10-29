@@ -41,11 +41,11 @@ class VersionCompatabilityTest : GradleProjectTest() {
       }
       """.trimIndent()
     )
-    setupGradleWrapper(gradleVersion = gradleVersion)
 
-    val image = ImageFixtures.dockerTemurin(
+    val image = ImageFixtures.dockerTemurinGradle(
       dockerVersion = dockerVersion,
       javaVersion = javaVersion,
+      gradleVersion = gradleVersion,
     )
     val container = GenericContainer(image)
       .withPrivilegedMode(true)
@@ -56,7 +56,7 @@ class VersionCompatabilityTest : GradleProjectTest() {
 
     val execResult = try {
       container.start()
-      container.execInContainer("./gradlew", "helloWorld")
+      container.execInContainer("gradle", "helloWorld")
     } finally {
       container.stop()
     }
