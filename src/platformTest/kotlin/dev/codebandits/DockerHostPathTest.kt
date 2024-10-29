@@ -29,7 +29,7 @@ class DockerHostPathTest : GradleProjectTest() {
           dockerRun {
             image = "alpine:latest"
             entrypoint = "echo"
-            containerArgs = arrayOf("Hello, world!")
+            args = arrayOf("Hello, world!")
             dockerHost = "unix:///var/run/custom.sock"
           }
         }

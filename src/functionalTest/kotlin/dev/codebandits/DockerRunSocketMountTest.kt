@@ -26,7 +26,7 @@ class DockerRunSocketMountTest : GradleProjectTest() {
           dockerRun {
             image = "curlimages/curl:latest"
             user = "root"
-            containerArgs = arrayOf("--unix-socket", "/var/run/docker.sock", "-sS", "http://./version")
+            args = arrayOf("--unix-socket", "/var/run/docker.sock", "-sS", "http://./version")
             volumes = arrayOf(
               "/var/run/docker.sock:/var/run/docker.sock:ro",
             )

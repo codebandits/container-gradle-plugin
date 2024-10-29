@@ -106,7 +106,7 @@ class DockerRunWorkdirTest : GradleProjectTest() {
           dockerRun {
             image = "alpine:latest"
             entrypoint = "cat"
-            containerArgs = arrayOf("input.txt")
+            args = arrayOf("input.txt")
             workdir = "/inputs"
             volumes = arrayOf(
               "${inputDirectory.absolutePathString()}:/inputs",

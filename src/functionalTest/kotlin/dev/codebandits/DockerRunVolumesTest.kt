@@ -19,7 +19,6 @@ class DockerRunVolumesTest : GradleProjectTest() {
     val inputFile = projectDirectory.resolve("input.txt").createFile()
     inputFile.appendLine("wild horses")
 
-
     gradleBuildFile.appendLine(
       """
       import dev.codebandits.ContainerRunTask
@@ -33,7 +32,7 @@ class DockerRunVolumesTest : GradleProjectTest() {
           dockerRun {
             image = "alpine:latest"
             entrypoint = "cat"
-            containerArgs = arrayOf("/inputs/input.txt")
+            args = arrayOf("/inputs/input.txt")
             volumes = arrayOf(
               "${inputFile.absolutePathString()}:/inputs/input.txt",
             )
@@ -73,7 +72,7 @@ class DockerRunVolumesTest : GradleProjectTest() {
           dockerRun {
             image = "alpine:latest"
             entrypoint = "cat"
-            containerArgs = arrayOf("/inputs/input.txt")
+            args = arrayOf("/inputs/input.txt")
             volumes = arrayOf(
               "${inputDirectory.absolutePathString()}:/inputs",
             )
@@ -117,7 +116,7 @@ class DockerRunVolumesTest : GradleProjectTest() {
           dockerRun {
             image = "alpine:latest"
             entrypoint = "sh"
-            containerArgs = arrayOf("-c", "tree /inputs && find /inputs -type f -exec cat {} +")
+            args = arrayOf("-c", "tree /inputs && find /inputs -type f -exec cat {} +")
             volumes = arrayOf(
               "${input1Directory.absolutePathString()}:/inputs/input-1",
               "${input2Directory.absolutePathString()}:/inputs/input-2",

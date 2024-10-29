@@ -6,11 +6,9 @@ import org.gradle.api.provider.Property
 public abstract class ContainerRunTask : ContainerExecTask() {
   public open class DockerRunSpec(objects: ObjectFactory) {
     public val image: Property<String> = objects.property(String::class.java)
+    public val volumes: Property<Array<String>> = objects.property(Array<String>::class.java).convention(emptyArray())
     public val entrypoint: Property<String> = objects.property(String::class.java)
-    public val volumes: Property<Array<String>> =
-      objects.property(Array<String>::class.java).convention(emptyArray())
-    public val containerArgs: Property<Array<String>> =
-      objects.property(Array<String>::class.java).convention(emptyArray())
+    public val args: Property<Array<String>> = objects.property(Array<String>::class.java).convention(emptyArray())
     public val workdir: Property<String> = objects.property(String::class.java)
     public val user: Property<String> = objects.property(String::class.java)
     public val autoRemove: Property<Boolean> = objects.property(Boolean::class.java).convention(true)
@@ -21,7 +19,6 @@ public abstract class ContainerRunTask : ContainerExecTask() {
   public fun dockerRun(configure: DockerRunSpec.() -> Unit) {
     val spec = DockerRunSpec(project.objects).apply(configure)
     val image = spec.image.get()
-    val containerArgs = spec.containerArgs.get()
     val options = mutableListOf<String>()
     val user = spec.user.orNull
     if (user != null) {
@@ -41,7 +38,7 @@ public abstract class ContainerRunTask : ContainerExecTask() {
     if (workdir != null) {
       options.addAll(listOf("--workdir", workdir))
     }
-    val dockerArgs = arrayOf("run", *options.toTypedArray(), image, *containerArgs)
+    val dockerArgs = arrayOf("run", *options.toTypedArray(), image, *spec.args.get())
     actionSteps.add(
       ExecutionStep(
         execAction = {

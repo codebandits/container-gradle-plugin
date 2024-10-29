@@ -31,7 +31,7 @@ class DockerRunTest : GradleProjectTest() {
           dockerRun {
             image = "alpine:3.18.9"
             entrypoint = "sh"
-            containerArgs = arrayOf(
+            args = arrayOf(
               "-c",
               "printf 'ALPINE VERSION: ' && cat /etc/alpine-release",
             )
@@ -95,7 +95,7 @@ class DockerRunTest : GradleProjectTest() {
           dockerRun {
             image = "alpine:latest"
             entrypoint = "cat"
-            containerArgs = arrayOf("/file-that-does-not-exist")
+            args = arrayOf("/file-that-does-not-exist")
           }
         }
       }
@@ -129,7 +129,7 @@ class DockerRunTest : GradleProjectTest() {
           dockerRun {
             image = "alpine:latest"
             entrypoint = "sh"
-            containerArgs = arrayOf(
+            args = arrayOf(
               "-c",
               "echo 'wonderful' && echo 'oh no' >&2",
             )
@@ -176,7 +176,7 @@ class DockerRunTest : GradleProjectTest() {
           dockerRun {
             image = "alpine:latest"
             entrypoint = "sh"
-            containerArgs = arrayOf(
+            args = arrayOf(
               "-c",
               "printf 'Be sure to drink your Ovaltine' > secret-message.txt",
             )

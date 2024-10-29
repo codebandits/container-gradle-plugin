@@ -35,7 +35,7 @@ class VersionCompatabilityTest : GradleProjectTest() {
             // setter syntax required for older versions of gradle
             image.set("alpine:latest")
             entrypoint.set("echo")
-            containerArgs.set(arrayOf("Hello, world!"))
+            args.set(arrayOf("Hello, world!"))
           }
         }
       }

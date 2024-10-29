@@ -28,7 +28,7 @@ class DockerRunAutoRemoveTest : GradleProjectTest() {
           dockerRun {
             image = "alpine:latest"
             entrypoint = "echo"
-            containerArgs = arrayOf("$uuid")
+            args = arrayOf("$uuid")
             workdir = "/workdir"
             volumes = arrayOf(
               "${'$'}{layout.projectDirectory}:/workdir",
@@ -66,7 +66,7 @@ class DockerRunAutoRemoveTest : GradleProjectTest() {
           dockerRun {
             image = "alpine:latest"
             entrypoint = "echo"
-            containerArgs = arrayOf("$uuid")
+            args = arrayOf("$uuid")
             workdir = "/workdir"
             volumes = arrayOf(
               "${'$'}{layout.projectDirectory}:/workdir",
@@ -105,7 +105,7 @@ class DockerRunAutoRemoveTest : GradleProjectTest() {
           dockerRun {
             image = "alpine:latest"
             entrypoint = "echo"
-            containerArgs = arrayOf("$uuid")
+            args = arrayOf("$uuid")
             workdir = "/workdir"
             volumes = arrayOf(
               "${'$'}{layout.projectDirectory}:/workdir",
