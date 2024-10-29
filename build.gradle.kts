@@ -13,20 +13,20 @@ kotlin {
 }
 
 sourceSets {
-  create("sharedTest")
+  create("testShared")
 }
 
 dependencies {
-  "sharedTestApi"(libs.junit.jupiter.api)
+  add(sourceSets["testShared"].apiConfigurationName, libs.junit.jupiter.api)
 }
 
 testing {
   @Suppress("UnstableApiUsage")
   suites {
-    register<JvmTestSuite>("functionalTest") {
+    register<JvmTestSuite>("testFeatures") {
       dependencies {
         implementation(project())
-        implementation(sourceSets["sharedTest"].output)
+        implementation(sourceSets["testShared"].output)
       }
       targets.all {
         testTask {
@@ -35,28 +35,28 @@ testing {
       }
     }
 
-    register<JvmTestSuite>("platformTest") {
+    register<JvmTestSuite>("testPlatforms") {
       dependencies {
         implementation(project())
-        implementation(sourceSets["sharedTest"].output)
+        implementation(sourceSets["testShared"].output)
         implementation(libs.testcontainers.testcontainers)
       }
       targets.all {
         testTask {
           environment("PROJECT_ROOT", rootDir.absolutePath)
-          shouldRunAfter("test", "functionalTest")
+          shouldRunAfter("test", "testFeatures")
         }
       }
     }
 
-    register<JvmTestSuite>("toolIntegrationTest") {
+    register<JvmTestSuite>("testToolIntegrations") {
       dependencies {
         implementation(project())
-        implementation(sourceSets["sharedTest"].output)
+        implementation(sourceSets["testShared"].output)
       }
       targets.all {
         testTask {
-          shouldRunAfter("test", "functionalTest")
+          shouldRunAfter("test", "testFeatures")
         }
       }
     }
@@ -89,18 +89,18 @@ gradlePlugin {
     }
   }
   testSourceSets(
-    sourceSets["functionalTest"],
-    sourceSets["platformTest"],
-    sourceSets["toolIntegrationTest"],
+    sourceSets["testFeatures"],
+    sourceSets["testPlatforms"],
+    sourceSets["testToolIntegrations"],
   )
 }
 
 tasks.named("check") {
   @Suppress("UnstableApiUsage")
   dependsOn(
-    testing.suites.named("functionalTest"),
-    testing.suites.named("platformTest"),
-    testing.suites.named("toolIntegrationTest"),
+    testing.suites.named("testFeatures"),
+    testing.suites.named("testPlatforms"),
+    testing.suites.named("testToolIntegrations"),
   )
 }
 
