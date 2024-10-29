@@ -32,7 +32,7 @@ class VersionCompatabilityTest : GradleProjectTest() {
       tasks {
         register<ContainerRunTask>("helloWorld") {
           dockerRun {
-            // setter syntax required for older versions of gradle
+            // Using set() property assignment for compatibility with Gradle versions before 8.2.
             image.set("alpine:latest")
             entrypoint.set("echo")
             args.set(arrayOf("Hello, world!"))
