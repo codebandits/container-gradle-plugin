@@ -49,6 +49,18 @@ testing {
       }
     }
 
+    register<JvmTestSuite>("toolIntegrationTest") {
+      dependencies {
+        implementation(project())
+        implementation(sourceSets["sharedTest"].output)
+      }
+      targets.all {
+        testTask {
+          shouldRunAfter("test", "functionalTest")
+        }
+      }
+    }
+
     withType<JvmTestSuite> {
       useJUnitJupiter(libs.versions.junit.jupiter)
       dependencies {
@@ -79,6 +91,7 @@ gradlePlugin {
   testSourceSets(
     sourceSets["functionalTest"],
     sourceSets["platformTest"],
+    sourceSets["toolIntegrationTest"],
   )
 }
 
@@ -87,6 +100,7 @@ tasks.named("check") {
   dependsOn(
     testing.suites.named("functionalTest"),
     testing.suites.named("platformTest"),
+    testing.suites.named("toolIntegrationTest"),
   )
 }
 
