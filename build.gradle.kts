@@ -18,6 +18,7 @@ sourceSets {
 
 dependencies {
   add(sourceSets["testShared"].apiConfigurationName, libs.junit.jupiter.api)
+  testImplementation(sourceSets["testShared"].output)
 }
 
 testing {
