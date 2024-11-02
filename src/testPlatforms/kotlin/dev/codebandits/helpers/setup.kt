@@ -2,17 +2,40 @@ package dev.codebandits.helpers
 
 import dev.codebandits.GradleProjectTest
 import java.io.File
+import java.nio.file.Path
 import kotlin.io.path.createDirectory
 
-internal fun GradleProjectTest.setupPluginIncludedBuild() {
+internal fun GradleProjectTest.setupPluginLibsDir() {
   val hostProjectRoot = File(System.getenv("PROJECT_ROOT"))
-  val includedBuildDirectory = projectDirectory.resolve("gradle-container-plugin").createDirectory()
-  hostProjectRoot.resolve("build.gradle.kts")
-    .copyTo(includedBuildDirectory.resolve("build.gradle.kts").toFile())
-  hostProjectRoot.resolve("settings.gradle.kts")
-    .copyTo(includedBuildDirectory.resolve("settings.gradle.kts").toFile())
-  hostProjectRoot.resolve("gradle/libs.versions.toml")
-    .copyTo(includedBuildDirectory.resolve("gradle/libs.versions.toml").toFile())
-  hostProjectRoot.resolve("src/main").copyRecursively(includedBuildDirectory.resolve("src/main").toFile())
-  settingsGradleKtsFile.appendLine("includeBuild(\"gradle-container-plugin\")")
+  val libsDirectory = projectDirectory.resolve("libs").createDirectory()
+  hostProjectRoot.resolve("build/libs/gradle-container-plugin.jar")
+    .copyRecursively(libsDirectory.resolve("gradle-container-plugin.jar").toFile())
+}
+
+internal fun Path.configureBuildGradlePluginFromLibsDir() {
+  appendLine(
+    """
+    import dev.codebandits.ContainerRunTask
+    buildscript {
+      dependencies {
+        classpath files('libs/gradle-container-plugin.jar')
+      }
+    }
+    apply plugin: 'dev.codebandits.container'
+    """.trimIndent()
+  )
+}
+
+internal fun Path.configureBuildGradleKtsPluginFromLibsDir() {
+  appendLine(
+    """
+    import dev.codebandits.ContainerRunTask
+    buildscript {
+      dependencies {
+        classpath(files("libs/gradle-container-plugin.jar"))
+      }
+    }
+    apply(plugin = "dev.codebandits.container")
+    """.trimIndent()
+  )
 }

@@ -50,6 +50,7 @@ testing {
       }
       targets.all {
         testTask {
+          dependsOn("jar")
           environment("PROJECT_ROOT", rootDir.absolutePath)
           shouldRunAfter("test", "testFeatures")
         }

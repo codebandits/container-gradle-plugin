@@ -1,7 +1,8 @@
 package dev.codebandits
 
 import dev.codebandits.helpers.appendLine
-import dev.codebandits.helpers.setupPluginIncludedBuild
+import dev.codebandits.helpers.configureBuildGradleKtsPluginFromLibsDir
+import dev.codebandits.helpers.setupPluginLibsDir
 import org.junit.jupiter.api.Test
 import org.testcontainers.containers.BindMode
 import org.testcontainers.containers.GenericContainer
@@ -15,15 +16,10 @@ class DockerHostPathTest : GradleProjectTest() {
 
   @Test
   fun `dockerRun uses a custom socket when dockerHost is set`() {
-    setupPluginIncludedBuild()
+    setupPluginLibsDir()
+    buildGradleKtsFile.configureBuildGradleKtsPluginFromLibsDir()
     buildGradleKtsFile.appendLine(
       """
-      import dev.codebandits.ContainerRunTask
-      
-      plugins {
-        id("dev.codebandits.container")
-      }
-      
       tasks {
         register<ContainerRunTask>("helloWorld") {
           dockerRun {
@@ -38,7 +34,7 @@ class DockerHostPathTest : GradleProjectTest() {
     )
     val image = ImageFixtures.dockerTemurinGradle(
       dockerVersion = "27",
-      javaVersion = "21",
+      javaVersion = ImageFixtures.JavaVersion.TEMURIN_21,
       gradleVersion = "8.10.2",
     )
     val container = GenericContainer(image)
@@ -62,15 +58,10 @@ class DockerHostPathTest : GradleProjectTest() {
 
   @Test
   fun `dockerRun fails when a non-existent dockerHost is set`() {
-    setupPluginIncludedBuild()
+    setupPluginLibsDir()
+    buildGradleKtsFile.configureBuildGradleKtsPluginFromLibsDir()
     buildGradleKtsFile.appendLine(
       """
-      import dev.codebandits.ContainerRunTask
-      
-      plugins {
-        id("dev.codebandits.container")
-      }
-      
       tasks {
         register<ContainerRunTask>("echo") {
           dockerRun {
@@ -85,7 +76,7 @@ class DockerHostPathTest : GradleProjectTest() {
 
     val image = ImageFixtures.dockerTemurinGradle(
       dockerVersion = "27",
-      javaVersion = "21",
+      javaVersion = ImageFixtures.JavaVersion.TEMURIN_21,
       gradleVersion = "8.10.2",
     )
     val container = GenericContainer(image)

@@ -1,7 +1,8 @@
 package dev.codebandits
 
 import dev.codebandits.helpers.appendLine
-import dev.codebandits.helpers.setupPluginIncludedBuild
+import dev.codebandits.helpers.configureBuildGradlePluginFromLibsDir
+import dev.codebandits.helpers.setupPluginLibsDir
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.CsvSource
 import org.testcontainers.containers.BindMode
@@ -15,33 +16,23 @@ class VersionCompatabilityTest : GradleProjectTest() {
 
   @ParameterizedTest(name = "run dockerRun using docker {0} java {1} gradle {2}")
   @CsvSource(
-    "27, 22, 8.10.2",
-    "26, 21, 7.6.4",
+    "27, TEMURIN_21, 8.10.2",
+    "26, OPENJDK_17, 7.6.4",
   )
-  fun `run dockerRun`(dockerVersion: String, javaVersion: String, gradleVersion: String) {
-    settingsGradleKtsFile.appendLine("rootProject.name = \"platform-testing\"")
-    setupPluginIncludedBuild()
-    buildGradleKtsFile.appendLine(
+  fun `run dockerRun`(dockerVersion: String, javaVersion: ImageFixtures.JavaVersion, gradleVersion: String) {
+    setupPluginLibsDir()
+    buildGradleFile.configureBuildGradlePluginFromLibsDir()
+    buildGradleFile.appendLine(
       """
-      import dev.codebandits.ContainerRunTask
-      
-      plugins {
-        id("dev.codebandits.container")
-      }
-      
-      tasks {
-        register<ContainerRunTask>("helloWorld") {
-          dockerRun {
-            // Using set() property assignment for compatibility with Gradle versions before 8.2.
-            image.set("alpine:latest")
-            entrypoint.set("echo")
-            args.set(arrayOf("Hello, world!"))
-          }
+      tasks.register('helloWorld', ContainerRunTask) {
+        dockerRun {
+          it.image.set('alpine:latest')
+          it.entrypoint.set('echo')
+          it.args.set(['Hello, world!'] as String[])
         }
       }
       """.trimIndent()
     )
-
     val image = ImageFixtures.dockerTemurinGradle(
       dockerVersion = dockerVersion,
       javaVersion = javaVersion,
