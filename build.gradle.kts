@@ -1,6 +1,7 @@
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat
 import org.gradle.api.tasks.testing.logging.TestLogEvent
 import org.gradle.kotlin.dsl.invoke
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.plugin.extraProperties
 import java.io.ByteArrayOutputStream
 import java.io.StringReader
@@ -16,6 +17,13 @@ plugins {
 
 kotlin {
   explicitApi()
+  compilerOptions {
+    jvmTarget.set(JvmTarget.JVM_17)
+  }
+}
+
+java {
+  targetCompatibility = JavaVersion.VERSION_17
 }
 
 sourceSets {
