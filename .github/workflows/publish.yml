@@ -6,8 +6,31 @@ on:
       - 'v*'
 
 jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+          cache: gradle
+
+      - name: Setup Docker
+        uses: docker/setup-buildx-action@v3
+
+      - name: Run Bootstrap
+        run: ./bootstrap.sh
+
+      - name: Run Gradle Check
+        run: ./gradlew check
+
   publish:
     if: github.repository == 'codebandits/gradle-container-plugin'
+    needs: check
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -23,9 +46,6 @@ jobs:
           java-version: 21
           cache: gradle
 
-      - name: Install SOPS
-        uses: mdgreenwald/mozilla-sops-action@v1
-
       - name: Load Infrastructure Configuration
         uses: codebandits/github-actions/load-env@main
         id: configuration
@@ -37,6 +57,9 @@ jobs:
           project_id: ${{ steps.configuration.outputs.GCP_PROJECT_ID }}
           workload_identity_provider: ${{ steps.configuration.outputs.GCP_WORKLOAD_IDENTITY_PROVIDER }}
           service_account: ${{ steps.configuration.outputs.GCP_SERVICE_ACCOUNT }}
+
+      - name: Install SOPS
+        uses: mdgreenwald/mozilla-sops-action@v1
 
       - name: Set Version
         run: |
