@@ -1,0 +1,3 @@
+---
+creation_rules:
+  - gcp_kms: projects/codebandits/locations/global/keyRings/sops-zoavn/cryptoKeys/repo-gradle-container-plugin-sops
