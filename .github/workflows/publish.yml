@@ -25,6 +25,18 @@ jobs:
       - name: Install SOPS
         uses: mdgreenwald/mozilla-sops-action@v1
 
+      - name: Load Infrastructure Configuration
+        uses: codebandits/github-actions/load-env@main
+        id: configuration
+        with:
+          path: ./.github/configuration.env
+
+      - uses: google-github-actions/auth@v2
+        with:
+          project_id: ${{ steps.configuration.outputs.GCP_PROJECT_ID }}
+          workload_identity_provider: ${{ steps.configuration.outputs.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: ${{ steps.configuration.outputs.GCP_SERVICE_ACCOUNT }}
+
       - name: Set Version
         run: |
           TAG="${{ github.ref_name }}"
