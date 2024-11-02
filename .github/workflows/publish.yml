@@ -1,0 +1,37 @@
+name: Publish
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  publish:
+    if: github.repository == 'codebandits/gradle-container-plugin'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+          cache: gradle
+
+      - name: Install SOPS
+        uses: mdgreenwald/mozilla-sops-action@v1
+
+      - name: Set Version
+        run: |
+          TAG="${{ github.ref_name }}"
+          echo "VERSION=${TAG#v}" >> $GITHUB_ENV
+
+      - name: Run Bootstrap
+        run: ./bootstrap.sh
+
+      - name: Publish Plugin
+        run: ./gradlew publishPlugins -Pversion=$VERSION --validate-only
