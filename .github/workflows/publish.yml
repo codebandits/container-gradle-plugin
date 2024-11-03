@@ -44,7 +44,8 @@ jobs:
           tag: ${{ steps.changelog.outputs.tag }}
 
   publish:
-    if: github.repository == 'codebandits/gradle-container-plugin'
+    name: Publish
+    if: github.ref == 'refs/heads/main' && github.repository == 'codebandits/gradle-container-plugin'
     needs: [ check, validate-release ]
     runs-on: ubuntu-latest
     permissions:
@@ -83,13 +84,6 @@ jobs:
 
       - name: Run Bootstrap
         run: ./bootstrap.sh
-
-      - name: Get Changelog
-        uses: denisa/clq-action@v1
-        id: changelog
-        with:
-          changeMap: .github/clq/changemap.json
-          mode: release
 
       - name: Publish Plugin
         run: ./gradlew publishPlugins -Pversion=${{ steps.changelog.outputs.version }} --validate-only
