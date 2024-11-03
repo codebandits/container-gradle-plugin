@@ -1,26 +1,22 @@
 name: Publish
 
 on:
-  push:
-    tags:
-      - 'v*'
+  workflow_dispatch:
 
 jobs:
   check:
+    name: Check
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Setup JDK
-        uses: actions/setup-java@v4
+      - uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: 21
           cache: gradle
 
-      - name: Setup Docker
-        uses: docker/setup-buildx-action@v3
+      - uses: docker/setup-buildx-action@v3
 
       - name: Run Bootstrap
         run: ./bootstrap.sh
@@ -28,19 +24,43 @@ jobs:
       - name: Run Gradle Check
         run: ./gradlew check
 
+  validate-release:
+    name: Validate Release
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Validate Changelog
+        uses: denisa/clq-action@v1
+        id: changelog
+        with:
+          changeMap: .github/clq/changemap.json
+          mode: release
+
+      - name: Validate Tag
+        uses: denisa/semantic-tag-helper@v1
+        with:
+          mode: test
+          tag: ${{ steps.changelog.outputs.tag }}
+
   publish:
     if: github.repository == 'codebandits/gradle-container-plugin'
-    needs: check
+    needs: [ check, validate-release ]
     runs-on: ubuntu-latest
     permissions:
       contents: write
       id-token: write
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Setup JDK
-        uses: actions/setup-java@v4
+      - name: Get Changelog
+        uses: denisa/clq-action@v1
+        id: changelog
+        with:
+          changeMap: .github/clq/changemap.json
+          mode: release
+
+      - uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: 21
@@ -61,13 +81,29 @@ jobs:
       - name: Install SOPS
         uses: mdgreenwald/mozilla-sops-action@v1
 
-      - name: Set Version
-        run: |
-          TAG="${{ github.ref_name }}"
-          echo "VERSION=${TAG#v}" >> $GITHUB_ENV
-
       - name: Run Bootstrap
         run: ./bootstrap.sh
 
+      - name: Get Changelog
+        uses: denisa/clq-action@v1
+        id: changelog
+        with:
+          changeMap: .github/clq/changemap.json
+          mode: release
+
       - name: Publish Plugin
-        run: ./gradlew publishPlugins -Pversion=$VERSION --validate-only
+        run: ./gradlew publishPlugins -Pversion=${{ steps.changelog.outputs.version }} --validate-only
+
+#      - name: Set Tag
+#        uses: denisa/semantic-tag-helper@v1
+#        with:
+#          mode: set
+#          tag: ${{ steps.changelog.outputs.tag }}
+#
+#      - name: Create Release
+#        uses: ncipollo/release-action@v1
+#        with:
+#          tag: ${{ steps.changelog.outputs.tag }}
+#          prerelease: ${{ steps.changelog.outputs.status == 'prereleased' }}
+#          name: ${{ steps.changelog.outputs.version }}
+#          body: ${{ steps.changelog.outputs.changes }}

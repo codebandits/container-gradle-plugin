@@ -1,0 +1,42 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  check:
+    name: Check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+          cache: gradle
+
+      - uses: docker/setup-buildx-action@v3
+
+      - name: Run Bootstrap
+        run: ./bootstrap.sh
+
+      - name: Run Gradle Check
+        run: ./gradlew check
+
+  validate-changelog:
+    name: Validate Changelog
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Validate Changelog
+        uses: denisa/clq-action@v1
+        with:
+          changeMap: .github/clq/changemap.json
+          mode: feature
