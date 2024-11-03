@@ -7,16 +7,13 @@ plugins {
 }
 
 tasks {
-  register<ContainerRunTask>("printImageID") {
+  register("printImageID") {
     dependsOn("buildImage")
     inputImages.dockerLocal("my-image:latest")
-    dockerRun {
-      image = "docker:dind"
-      entrypoint = "docker"
-      args = arrayOf("images", "--filter", "reference=my-image:latest", "--format", "{{.ID}}")
-      volumes = arrayOf(
-        "/var/run/docker.sock:/var/run/docker.sock:ro",
-      )
+    doLast {
+      exec {
+        commandLine("sh", "-c", "docker images --filter reference=my-image:latest --format {{.ID}}")
+      }
     }
   }
 
