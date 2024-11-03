@@ -5,7 +5,6 @@ import dev.codebandits.helpers.configureBuildGradleKtsPluginFromLibsDir
 import dev.codebandits.helpers.setupPluginLibsDir
 import org.junit.jupiter.api.Test
 import org.testcontainers.containers.BindMode
-import org.testcontainers.containers.GenericContainer
 import org.testcontainers.utility.MountableFile
 import strikt.api.expectThat
 import strikt.assertions.contains
@@ -32,13 +31,11 @@ class DockerHostPathTest : GradleProjectTest() {
       }
       """.trimIndent()
     )
-    val image = ImageFixtures.dockerTemurinGradle(
+    val container = ContainerProvider.dockerJavaGradle(
       dockerVersion = "27",
-      javaVersion = ImageFixtures.JavaVersion.TEMURIN_21,
+      javaVersion = JavaVersion.TEMURIN_21,
       gradleVersion = "8.10.2",
     )
-    val container = GenericContainer(image)
-      .withStartupAttempts(3)
       .withFileSystemBind("/var/run/docker.sock", "/var/run/custom.sock", BindMode.READ_ONLY)
       .withCopyFileToContainer(MountableFile.forHostPath(projectDirectory), "/project")
       .withWorkingDirectory("/project")
@@ -74,13 +71,11 @@ class DockerHostPathTest : GradleProjectTest() {
       """.trimIndent()
     )
 
-    val image = ImageFixtures.dockerTemurinGradle(
+    val container = ContainerProvider.dockerJavaGradle(
       dockerVersion = "27",
-      javaVersion = ImageFixtures.JavaVersion.TEMURIN_21,
+      javaVersion = JavaVersion.TEMURIN_21,
       gradleVersion = "8.10.2",
     )
-    val container = GenericContainer(image)
-      .withStartupAttempts(3)
       .withFileSystemBind("/var/run/docker.sock", "/var/run/docker.sock", BindMode.READ_ONLY)
       .withCopyFileToContainer(MountableFile.forHostPath(projectDirectory), "/project")
       .withWorkingDirectory("/project")

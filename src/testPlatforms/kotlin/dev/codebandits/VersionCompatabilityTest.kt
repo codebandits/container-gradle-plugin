@@ -6,7 +6,6 @@ import dev.codebandits.helpers.setupPluginLibsDir
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.CsvSource
 import org.testcontainers.containers.BindMode
-import org.testcontainers.containers.GenericContainer
 import org.testcontainers.utility.MountableFile
 import strikt.api.expectThat
 import strikt.assertions.contains
@@ -19,7 +18,7 @@ class VersionCompatabilityTest : GradleProjectTest() {
     "27, TEMURIN_21, 8.10.2",
     "26, OPENJDK_17, 7.6.4",
   )
-  fun `run dockerRun`(dockerVersion: String, javaVersion: ImageFixtures.JavaVersion, gradleVersion: String) {
+  fun `run dockerRun`(dockerVersion: String, javaVersion: JavaVersion, gradleVersion: String) {
     setupPluginLibsDir()
     buildGradleFile.configureBuildGradlePluginFromLibsDir()
     buildGradleFile.appendLine(
@@ -33,13 +32,11 @@ class VersionCompatabilityTest : GradleProjectTest() {
       }
       """.trimIndent()
     )
-    val image = ImageFixtures.dockerTemurinGradle(
+    val container = ContainerProvider.dockerJavaGradle(
       dockerVersion = dockerVersion,
       javaVersion = javaVersion,
       gradleVersion = gradleVersion,
     )
-    val container = GenericContainer(image)
-      .withStartupAttempts(3)
       .withFileSystemBind("/var/run/docker.sock", "/var/run/docker.sock", BindMode.READ_ONLY)
       .withCopyFileToContainer(MountableFile.forHostPath(projectDirectory), "/project")
       .withWorkingDirectory("/project")

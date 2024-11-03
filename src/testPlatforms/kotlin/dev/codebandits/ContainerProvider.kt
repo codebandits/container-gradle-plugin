@@ -1,25 +1,37 @@
 package dev.codebandits
 
+import org.testcontainers.containers.GenericContainer
 import org.testcontainers.images.builder.ImageFromDockerfile
 import org.testcontainers.images.builder.dockerfile.DockerfileBuilder
 
-object ImageFixtures {
-  private val imageCache = mutableMapOf<Any, ImageFromDockerfile>()
-
-  enum class JavaVersion {
-    TEMURIN_22,
-    TEMURIN_21,
-    TEMURIN_20,
-    OPENJDK_17,
-    OPENJDK_11,
+object ContainerProvider {
+  fun dockerJavaGradle(
+    dockerVersion: String,
+    javaVersion: JavaVersion,
+    gradleVersion: String,
+  ): GenericContainer<*> {
+    val image = ImageFixtures.dockerJavaGradle(
+      dockerVersion = dockerVersion,
+      javaVersion = javaVersion,
+      gradleVersion = gradleVersion,
+    )
+    val container: GenericContainer<*> = GenericContainer(image)
+    if (System.getenv("CI") == "true") {
+      container.withStartupAttempts(3)
+    }
+    return container
   }
+}
 
-  fun dockerTemurinGradle(
+private object ImageFixtures {
+  private val imageCache = mutableMapOf<List<Any>, ImageFromDockerfile>()
+
+  fun dockerJavaGradle(
     dockerVersion: String,
     javaVersion: JavaVersion,
     gradleVersion: String,
   ): ImageFromDockerfile {
-    val imageIdentifier = Pair("docker-temurin-gradle", Triple(dockerVersion, javaVersion, gradleVersion))
+    val imageIdentifier = listOf("docker-java-gradle", dockerVersion, javaVersion, gradleVersion)
     return imageCache.getOrPut(imageIdentifier) {
       ImageFromDockerfile()
         .withDockerfileFromBuilder { builder ->
