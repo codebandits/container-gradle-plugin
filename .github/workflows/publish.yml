@@ -86,18 +86,18 @@ jobs:
         run: ./bootstrap.sh
 
       - name: Publish Plugin
-        run: ./gradlew publishPlugins -Pversion=${{ steps.changelog.outputs.version }} --validate-only
+        run: ./gradlew publishPlugins -Pversion=${{ steps.changelog.outputs.version }}
 
-#      - name: Set Tag
-#        uses: denisa/semantic-tag-helper@v1
-#        with:
-#          mode: set
-#          tag: ${{ steps.changelog.outputs.tag }}
-#
-#      - name: Create Release
-#        uses: ncipollo/release-action@v1
-#        with:
-#          tag: ${{ steps.changelog.outputs.tag }}
-#          prerelease: ${{ steps.changelog.outputs.status == 'prereleased' }}
-#          name: ${{ steps.changelog.outputs.version }}
-#          body: ${{ steps.changelog.outputs.changes }}
+      - name: Set Tag
+        uses: denisa/semantic-tag-helper@v1
+        with:
+          mode: set
+          tag: ${{ steps.changelog.outputs.tag }}
+
+      - name: Create Release
+        uses: ncipollo/release-action@v1
+        with:
+          tag: ${{ steps.changelog.outputs.tag }}
+          prerelease: ${{ steps.changelog.outputs.status == 'prereleased' }}
+          name: ${{ steps.changelog.outputs.version }}
+          body: ${{ steps.changelog.outputs.changes }}
