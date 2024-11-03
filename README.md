@@ -27,18 +27,11 @@ Create tasks that use containers:
 import dev.codebandits.ContainerRunTask
 
 tasks {
-  register<ContainerRunTask>("sayHello") {
-    dockerRun {
-      image = "alpine:latest"
-      args = arrayOf("echo", "Hello from a container!")
-    }
-  }
-
   register<ContainerRunTask>("writeHello") {
     dockerRun {
       image = "alpine:latest"
       entrypoint = "sh"
-      args = arrayOf("-c", "echo 'Hello from a container!' > message.txt")
+      args = arrayOf("-c", "echo Hello from a container! > message.txt")
       workdir = "/workdir"
       volumes = arrayOf(
         "${layout.projectDirectory}:/workdir",
@@ -48,39 +41,7 @@ tasks {
 }
 ```
 
-Declare containers as task inputs and outputs:
-
-```kotlin
-import dev.codebandits.ContainerRunTask
-
-tasks {
-  register<ContainerRunTask>("buildContainer") {
-    outputImages.dockerLocal("my-image:latest")
-    dockerRun {
-      image = "buildpacksio/pack:latest"
-      args = arrayOf(
-        "build", "my-image:latest",
-        "--builder", "paketobuildpacks/builder-jammy-base:latest"
-      )
-      workdir = "/workdir"
-      volumes = arrayOf(
-        "${layout.projectDirectory}:/workdir",
-        "/var/run/docker.sock:/var/run/docker.sock:ro",
-      )
-    }
-  }
-
-  register<ContainerRunTask>("useContainer") {
-    dependsOn("buildContainer")
-    inputImages.dockerLocal("my-image:latest")
-    dockerRun {
-      image = "my-image:latest"
-      entrypoint = "echo"
-      args = arrayOf("echo", "Hello from my custom container!")
-    }
-  }
-}
-```
+To see more ways to use this plugin see the [examples folder](examples/).
 
 ## Contributing
 

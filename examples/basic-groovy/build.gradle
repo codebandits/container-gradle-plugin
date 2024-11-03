@@ -1,0 +1,22 @@
+import dev.codebandits.ContainerRunTask
+
+plugins {
+    id 'dev.codebandits.container'
+}
+
+tasks.register('sayHello', ContainerRunTask) {
+    dockerRun {
+        it.image.set('alpine:latest')
+        it.args.set(['echo', 'Hello from a container!'] as String[])
+    }
+}
+
+tasks.register('writeHello', ContainerRunTask) {
+    dockerRun {
+        it.image.set('alpine:latest')
+        it.entrypoint.set('sh')
+        it.args.set(['-c', "echo Hello from a container! > message.txt"] as String[])
+        it.workdir.set('/workdir')
+        it.volumes.set(["${layout.projectDirectory}:/workdir"] as String[])
+    }
+}
