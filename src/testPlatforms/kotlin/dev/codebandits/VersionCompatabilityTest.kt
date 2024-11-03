@@ -39,7 +39,7 @@ class VersionCompatabilityTest : GradleProjectTest() {
       gradleVersion = gradleVersion,
     )
     val container = GenericContainer(image)
-      .withPrivilegedMode(true)
+      .withStartupAttempts(3)
       .withFileSystemBind("/var/run/docker.sock", "/var/run/docker.sock", BindMode.READ_ONLY)
       .withCopyFileToContainer(MountableFile.forHostPath(projectDirectory), "/project")
       .withWorkingDirectory("/project")

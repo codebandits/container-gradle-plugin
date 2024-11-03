@@ -38,7 +38,7 @@ class DockerHostPathTest : GradleProjectTest() {
       gradleVersion = "8.10.2",
     )
     val container = GenericContainer(image)
-      .withPrivilegedMode(true)
+      .withStartupAttempts(3)
       .withFileSystemBind("/var/run/docker.sock", "/var/run/custom.sock", BindMode.READ_ONLY)
       .withCopyFileToContainer(MountableFile.forHostPath(projectDirectory), "/project")
       .withWorkingDirectory("/project")
@@ -80,7 +80,7 @@ class DockerHostPathTest : GradleProjectTest() {
       gradleVersion = "8.10.2",
     )
     val container = GenericContainer(image)
-      .withPrivilegedMode(true)
+      .withStartupAttempts(3)
       .withFileSystemBind("/var/run/docker.sock", "/var/run/docker.sock", BindMode.READ_ONLY)
       .withCopyFileToContainer(MountableFile.forHostPath(projectDirectory), "/project")
       .withWorkingDirectory("/project")
