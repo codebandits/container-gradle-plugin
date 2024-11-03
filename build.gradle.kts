@@ -9,7 +9,6 @@ import java.nio.charset.StandardCharsets
 import java.util.Properties
 
 plugins {
-  `java-gradle-plugin`
   `jvm-test-suite`
   alias(libs.plugins.kotlinJvm)
   alias(libs.plugins.publish)
