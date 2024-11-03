@@ -24,6 +24,8 @@ plugins {
 Create tasks that use containers:
 
 ```kotlin
+import dev.codebandits.ContainerRunTask
+
 tasks {
   register<ContainerRunTask>("sayHello") {
     dockerRun {
@@ -49,6 +51,8 @@ tasks {
 Declare containers as task inputs and outputs:
 
 ```kotlin
+import dev.codebandits.ContainerRunTask
+
 tasks {
   register<ContainerRunTask>("buildContainer") {
     outputImages.dockerLocal("my-image:latest")
