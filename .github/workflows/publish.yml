@@ -67,17 +67,17 @@ jobs:
           java-version: 21
           cache: gradle
 
-      - name: Load Infrastructure Configuration
+      - name: Load GCP Configuration
         uses: codebandits/github-actions/load-env@main
-        id: configuration
+        id: gcp-configuration
         with:
-          path: ./.github/configuration.env
+          path: ./.github/gcp.env
 
       - uses: google-github-actions/auth@v2
         with:
-          project_id: ${{ steps.configuration.outputs.GCP_PROJECT_ID }}
-          workload_identity_provider: ${{ steps.configuration.outputs.GCP_WORKLOAD_IDENTITY_PROVIDER }}
-          service_account: ${{ steps.configuration.outputs.GCP_SERVICE_ACCOUNT }}
+          project_id: ${{ steps.gcp-configuration.outputs.GCP_PROJECT_ID }}
+          workload_identity_provider: ${{ steps.gcp-configuration.outputs.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: ${{ steps.gcp-configuration.outputs.GCP_SERVICE_ACCOUNT }}
 
       - name: Install SOPS
         uses: mdgreenwald/mozilla-sops-action@v1
