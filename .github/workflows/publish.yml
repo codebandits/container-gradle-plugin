@@ -68,7 +68,7 @@ jobs:
           cache: gradle
 
       - name: Load GCP Configuration
-        uses: codebandits/github-actions/load-env@main
+        uses: codebandits/github-actions/load-env@v1
         id: gcp-configuration
         with:
           path: ./.github/gcp.env
