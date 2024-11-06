@@ -1,6 +1,8 @@
+import com.vanniktech.maven.publish.SonatypeHost
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat
 import org.gradle.api.tasks.testing.logging.TestLogEvent
-import org.gradle.kotlin.dsl.invoke
+import org.gradle.kotlin.dsl.kotlin
+import org.gradle.kotlin.dsl.withType
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.plugin.extraProperties
 import java.io.ByteArrayOutputStream
@@ -8,10 +10,97 @@ import java.io.StringReader
 import java.nio.charset.StandardCharsets
 import java.util.Properties
 
+group = "dev.codebandits"
+
+val projectDescription = listOf(
+  "Container is a Gradle plugin that enhances build portability, reproducibility, and flexibility",
+  "by integrating containers into Gradle tasks. It provides a declarative and familiar way",
+  "to run task operations inside containers and declare containers as task inputs and outputs."
+).joinToString(" ")
+
 plugins {
-  `jvm-test-suite`
   alias(libs.plugins.kotlinJvm)
-  alias(libs.plugins.publish)
+  alias(libs.plugins.mavenPublish)
+  `java-gradle-plugin`
+  `jvm-test-suite`
+  signing
+}
+
+mavenPublishing {
+  publishToMavenCentral(SonatypeHost.CENTRAL_PORTAL)
+  signAllPublications()
+
+  pom {
+    description = projectDescription
+    url = "https://github.com/codebandits/container-gradle-plugin"
+    licenses {
+      license {
+        name = "MIT License"
+        url = "https://github.com/codebandits/container-gradle-plugin/blob/main/LICENSE"
+        distribution = "repo"
+      }
+    }
+    developers {
+      developer {
+        id.set("codebandits")
+        name = "Code Bandits Team"
+        organization = "Code Bandits"
+        organizationUrl = "https://github.com/codebandits"
+      }
+    }
+    scm {
+      url = "https://github.com/codebandits/container-gradle-plugin"
+    }
+  }
+}
+
+tasks {
+  val configureSigning = register("configureSigning") {
+    group = "publishing"
+    doLast {
+      ByteArrayOutputStream()
+        .use { sopsOutputStream ->
+          exec {
+            commandLine("sh", "-c", "sops --decrypt signing.enc.properties")
+            standardOutput = sopsOutputStream
+          }
+          sopsOutputStream.toString(StandardCharsets.UTF_8)
+        }
+        .let { output -> Properties().apply { load(StringReader(output)) } }
+        .forEach { key, value -> project.extraProperties.set(key.toString(), value) }
+      signing.useInMemoryPgpKeys(
+        project.property("signing.keyId").toString(),
+        project.property("signing.key").toString(),
+        project.property("signing.password").toString(),
+      )
+    }
+  }
+
+  withType<Sign> {
+    dependsOn(configureSigning)
+  }
+
+  val loadPublishingSecrets = register("loadPublishingSecrets") {
+    group = "publishing"
+    doLast {
+      ByteArrayOutputStream()
+        .use { sopsOutputStream ->
+          exec {
+            commandLine("sh", "-c", "sops --decrypt publishing.enc.properties")
+            standardOutput = sopsOutputStream
+          }
+          sopsOutputStream.toString(StandardCharsets.UTF_8)
+        }
+        .let { output -> Properties().apply { load(StringReader(output)) } }
+        .forEach { key, value -> project.extraProperties.set(key.toString(), value) }
+    }
+  }
+
+  withType<PublishToMavenRepository> {
+    if (name.endsWith("ToMavenCentralRepository")) {
+      dependsOn(loadPublishingSecrets)
+    }
+  }
 }
 
 kotlin {
@@ -96,21 +185,10 @@ testing {
   }
 }
 
-group = "dev.codebandits"
-
 gradlePlugin {
   plugins {
     create("container") {
-      website = "https://github.com/codebandits/container-gradle-plugin"
-      vcsUrl = "https://github.com/codebandits/container-gradle-plugin"
       id = "dev.codebandits.container"
-      displayName = "Container"
-      description = listOf(
-        "Container is a Gradle plugin that enhances build portability, reproducibility, and flexibility",
-        "by integrating containers into Gradle tasks. It provides a declarative and familiar way",
-        "to run task operations inside containers and declare containers as task inputs and outputs."
-      ).joinToString(" ")
-      tags = listOf("container", "docker", "oci", "buildpack")
       implementationClass = "dev.codebandits.ContainerPlugin"
     }
   }
@@ -128,25 +206,6 @@ tasks.named("check") {
     testing.suites.named("testPlatforms"),
     testing.suites.named("testToolIntegrations"),
   )
-}
-
-tasks.register("loadPublishingSecrets") {
-  doLast {
-    ByteArrayOutputStream()
-      .use { sopsOutputStream ->
-        exec {
-          commandLine("sh", "-c", "sops --decrypt publishing.enc.properties")
-          standardOutput = sopsOutputStream
-        }
-        sopsOutputStream.toString(StandardCharsets.UTF_8)
-      }
-      .let { output -> Properties().apply { load(StringReader(output)) } }
-      .forEach { (key, value) -> project.extraProperties[key.toString()] = value }
-  }
-}
-
-tasks.named("publishPlugins") {
-  dependsOn("loadPublishingSecrets")
 }
 
 // Workaround for https://github.com/gradle/gradle/issues/1893

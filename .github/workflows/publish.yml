@@ -85,8 +85,14 @@ jobs:
       - name: Run Bootstrap
         run: ./bootstrap.sh
 
+      - name: Provide Publishing Secrets
+        run: sops --decrypt publishing.enc.properties >> gradle.properties
+
       - name: Publish Plugin
         run: ./gradlew publishPlugins -Pversion=${{ steps.changelog.outputs.version }}
+
+      - name: Remove Publishing Secrets
+        run: git checkout gradle.properties
 
       - name: Set Tag
         uses: denisa/semantic-tag-helper@v1
