@@ -13,7 +13,7 @@ Container is a Gradle plugin that enhances build portability, reproducibility, a
 
 ## Getting Started
 
-This plugin is published to the [Gradle Plugin Portal](https://plugins.gradle.org/plugin/dev.codebandits.container). Add the plugin to your `build.gradle.kts` file:
+Add the plugin to your `build.gradle.kts` file:
 
 ```kotlin
 plugins {
