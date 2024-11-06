@@ -1,5 +1,5 @@
-import dev.codebandits.ContainerRunTask
-import dev.codebandits.outputImages
+import dev.codebandits.container.gradle.tasks.ContainerRunTask
+import dev.codebandits.container.gradle.tasks.outputImages
 
 plugins {
   id("dev.codebandits.container")

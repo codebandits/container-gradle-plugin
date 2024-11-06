@@ -1,4 +1,4 @@
-import dev.codebandits.ContainerRunTask
+import dev.codebandits.container.gradle.tasks.ContainerRunTask
 
 plugins {
     id 'dev.codebandits.container'

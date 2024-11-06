@@ -24,7 +24,7 @@ plugins {
 Create tasks that use containers:
 
 ```kotlin
-import dev.codebandits.ContainerRunTask
+import dev.codebandits.container.gradle.tasks.ContainerRunTask
 
 tasks {
   register<ContainerRunTask>("writeHello") {

@@ -189,7 +189,7 @@ gradlePlugin {
   plugins {
     create("container") {
       id = "dev.codebandits.container"
-      implementationClass = "dev.codebandits.ContainerPlugin"
+      implementationClass = "dev.codebandits.container.gradle.plugin.ContainerPlugin"
     }
   }
   testSourceSets(
