@@ -1,4 +1,4 @@
-rootProject.name = "gradle-container-plugin"
+rootProject.name = "container-gradle-plugin"
 
 dependencyResolutionManagement {
   @Suppress("UnstableApiUsage")

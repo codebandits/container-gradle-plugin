@@ -101,8 +101,8 @@ group = "dev.codebandits"
 gradlePlugin {
   plugins {
     create("container") {
-      website = "https://github.com/codebandits/gradle-container-plugin"
-      vcsUrl = "https://github.com/codebandits/gradle-container-plugin"
+      website = "https://github.com/codebandits/container-gradle-plugin"
+      vcsUrl = "https://github.com/codebandits/container-gradle-plugin"
       id = "dev.codebandits.container"
       displayName = "Container"
       description = listOf(

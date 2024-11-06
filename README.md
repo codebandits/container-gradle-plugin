@@ -1,4 +1,4 @@
-# Container
+# Container Gradle Plugin
 
 Container is a Gradle plugin that enhances build portability, reproducibility, and flexibility by integrating containers into Gradle tasks. It provides a declarative and familiar way to run task operations inside containers and declare containers as task inputs and outputs.
 

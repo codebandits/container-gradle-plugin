@@ -45,7 +45,7 @@ jobs:
 
   publish:
     name: Publish
-    if: github.ref == 'refs/heads/main' && github.repository == 'codebandits/gradle-container-plugin'
+    if: github.ref == 'refs/heads/main' && github.repository == 'codebandits/container-gradle-plugin'
     needs: [ check, validate-release ]
     runs-on: ubuntu-latest
     permissions:

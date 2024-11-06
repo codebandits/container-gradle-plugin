@@ -11,7 +11,7 @@ abstract class GradleProjectTest {
   val buildGradleKtsFile by lazy { projectDirectory.resolve("build.gradle.kts").createFile() }
   val settingsGradleKtsFile by lazy { projectDirectory.resolve("settings.gradle.kts").createFile() }
   val buildGradleFile by lazy { projectDirectory.resolve("build.gradle").createFile() }
-  val imageName = "test-gradle-container-plugin"
+  val imageName = "test-container-gradle-plugin"
   fun generateUniqueImageReference() = "$imageName:test-image-${UUID.randomUUID()}"
 
   @AfterEach

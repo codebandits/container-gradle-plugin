@@ -8,8 +8,8 @@ import kotlin.io.path.createDirectory
 internal fun GradleProjectTest.setupPluginLibsDir() {
   val hostProjectRoot = File(System.getenv("PROJECT_ROOT"))
   val libsDirectory = projectDirectory.resolve("libs").createDirectory()
-  hostProjectRoot.resolve("build/libs/gradle-container-plugin.jar")
-    .copyRecursively(libsDirectory.resolve("gradle-container-plugin.jar").toFile())
+  hostProjectRoot.resolve("build/libs/container-gradle-plugin.jar")
+    .copyRecursively(libsDirectory.resolve("container-gradle-plugin.jar").toFile())
 }
 
 internal fun Path.configureBuildGradlePluginFromLibsDir() {
@@ -18,7 +18,7 @@ internal fun Path.configureBuildGradlePluginFromLibsDir() {
     import dev.codebandits.ContainerRunTask
     buildscript {
       dependencies {
-        classpath files('libs/gradle-container-plugin.jar')
+        classpath files('libs/container-gradle-plugin.jar')
       }
     }
     apply plugin: 'dev.codebandits.container'
@@ -32,7 +32,7 @@ internal fun Path.configureBuildGradleKtsPluginFromLibsDir() {
     import dev.codebandits.ContainerRunTask
     buildscript {
       dependencies {
-        classpath(files("libs/gradle-container-plugin.jar"))
+        classpath(files("libs/container-gradle-plugin.jar"))
       }
     }
     apply(plugin = "dev.codebandits.container")
