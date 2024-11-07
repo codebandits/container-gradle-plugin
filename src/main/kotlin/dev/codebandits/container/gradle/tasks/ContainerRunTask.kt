@@ -11,6 +11,7 @@ public abstract class ContainerRunTask : ContainerExecTask() {
     public val args: Property<Array<String>> = objects.property(Array<String>::class.java).convention(emptyArray())
     public val workdir: Property<String> = objects.property(String::class.java)
     public val user: Property<String> = objects.property(String::class.java)
+    public val privileged: Property<Boolean> = objects.property(Boolean::class.java).convention(false)
     public val autoRemove: Property<Boolean> = objects.property(Boolean::class.java).convention(true)
     public val alwaysPull: Property<Boolean> = objects.property(Boolean::class.java).convention(true)
     public val dockerHost: Property<String> = objects.property(String::class.java)
@@ -23,6 +24,9 @@ public abstract class ContainerRunTask : ContainerExecTask() {
     val user = spec.user.orNull
     if (user != null) {
       options.addAll(listOf("--user", user))
+    }
+    if (spec.privileged.get()) {
+      options.add("--privileged")
     }
     if (spec.autoRemove.get()) {
       options.add("--rm")
