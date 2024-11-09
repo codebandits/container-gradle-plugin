@@ -24,7 +24,7 @@ public abstract class TaskImages(private val task: Task) {
       execAction = {
         val file = imageIdentifierFileProvider.get().asFile
         file.parentFile.mkdirs()
-        executable = Commands.dockerPath
+        executable = "docker"
         args("inspect", "--format", "{{.Id}}", imageReference)
         standardOutput = imageIdentifierFileProvider.get().asFile.outputStream()
         errorOutput = OutputStream.nullOutputStream()
@@ -57,7 +57,7 @@ public abstract class TaskImages(private val task: Task) {
       execAction = {
         val file = imageIdentifierFileProvider.get().asFile
         file.parentFile.mkdirs()
-        this.executable = Commands.dockerPath
+        executable = "docker"
         args("manifest", "inspect", imageReference)
         standardOutput = file.outputStream()
         isIgnoreExitValue = true

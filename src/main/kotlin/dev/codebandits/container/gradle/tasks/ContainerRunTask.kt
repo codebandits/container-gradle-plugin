@@ -46,7 +46,7 @@ public abstract class ContainerRunTask : ContainerExecTask() {
     actionSteps.add(
       ExecutionStep(
         execAction = {
-          executable = Commands.dockerPath
+          executable = "docker"
           args(*dockerArgs)
           val dockerHost = spec.dockerHost.orNull
           if (dockerHost != null) {
