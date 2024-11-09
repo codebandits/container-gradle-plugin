@@ -18,34 +18,34 @@ public abstract class ContainerRunTask : ContainerExecTask() {
   }
 
   public fun dockerRun(configure: DockerRunSpec.() -> Unit) {
-    val spec = DockerRunSpec(project.objects).apply(configure)
-    val image = spec.image.get()
-    val options = mutableListOf<String>()
-    val user = spec.user.orNull
-    if (user != null) {
-      options.addAll(listOf("--user", user))
-    }
-    if (spec.privileged.get()) {
-      options.add("--privileged")
-    }
-    if (spec.autoRemove.get()) {
-      options.add("--rm")
-    }
-    spec.volumes.get().forEach { volume ->
-      options.addAll(listOf("--volume", volume))
-    }
-    val entrypoint = spec.entrypoint.orNull
-    if (entrypoint != null) {
-      options.addAll(listOf("--entrypoint", entrypoint))
-    }
-    val workdir = spec.workdir.orNull
-    if (workdir != null) {
-      options.addAll(listOf("--workdir", workdir))
-    }
-    val dockerArgs = arrayOf("run", *options.toTypedArray(), image, *spec.args.get())
     actionSteps.add(
       ExecutionStep(
         execAction = {
+          val spec = DockerRunSpec(project.objects).apply(configure)
+          val image = spec.image.get()
+          val options = mutableListOf<String>()
+          val user = spec.user.orNull
+          if (user != null) {
+            options.addAll(listOf("--user", user))
+          }
+          if (spec.privileged.get()) {
+            options.add("--privileged")
+          }
+          if (spec.autoRemove.get()) {
+            options.add("--rm")
+          }
+          spec.volumes.get().forEach { volume ->
+            options.addAll(listOf("--volume", volume))
+          }
+          val entrypoint = spec.entrypoint.orNull
+          if (entrypoint != null) {
+            options.addAll(listOf("--entrypoint", entrypoint))
+          }
+          val workdir = spec.workdir.orNull
+          if (workdir != null) {
+            options.addAll(listOf("--workdir", workdir))
+          }
+          val dockerArgs = arrayOf("run", *options.toTypedArray(), image, *spec.args.get())
           executable = "docker"
           args(*dockerArgs)
           val dockerHost = spec.dockerHost.orNull

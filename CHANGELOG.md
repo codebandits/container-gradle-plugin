@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - Simplify the path evaluation for docker
+- Lazily evaluate dockerRun configuration
 
 ## [0.1.0] - 2024-11-07
 
