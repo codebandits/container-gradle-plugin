@@ -8,6 +8,10 @@
     "increment": "major"
   },
   {
+    "name": "Chore",
+    "increment": "patch"
+  },
+  {
     "name": "Deprecated",
     "increment": "minor"
   },
