@@ -1,6 +1,7 @@
 import dev.codebandits.container.gradle.tasks.ContainerRunTask
 import dev.codebandits.container.gradle.tasks.inputImages
 import dev.codebandits.container.gradle.tasks.outputImages
+import org.gradle.kotlin.dsl.support.serviceOf
 
 plugins {
   id("dev.codebandits.container")
@@ -11,7 +12,7 @@ tasks {
     dependsOn("buildImage")
     inputImages.dockerLocal("my-image:latest")
     doLast {
-      exec {
+      serviceOf<ExecOperations>().exec {
         commandLine("sh", "-c", "docker images --filter reference=my-image:latest --format {{.ID}}")
       }
     }

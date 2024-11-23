@@ -1,6 +1,7 @@
 import com.vanniktech.maven.publish.SonatypeHost
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat
 import org.gradle.api.tasks.testing.logging.TestLogEvent
+import org.gradle.kotlin.dsl.support.serviceOf
 import org.gradle.kotlin.dsl.kotlin
 import org.gradle.kotlin.dsl.withType
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
@@ -60,7 +61,7 @@ tasks {
     doLast {
       ByteArrayOutputStream()
         .use { sopsOutputStream ->
-          exec {
+          serviceOf<ExecOperations>().exec {
             commandLine("sh", "-c", "sops --decrypt signing.enc.properties")
             standardOutput = sopsOutputStream
           }
@@ -85,7 +86,7 @@ tasks {
     doLast {
       ByteArrayOutputStream()
         .use { sopsOutputStream ->
-          exec {
+          serviceOf<ExecOperations>().exec {
             commandLine("sh", "-c", "sops --decrypt publishing.enc.properties")
             standardOutput = sopsOutputStream
           }
