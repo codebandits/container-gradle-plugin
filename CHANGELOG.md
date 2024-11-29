@@ -11,9 +11,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.1.2] - 2024-11-29
 
+### Fixed
+
+- Resolve project.exec deprecation warnings by replacing with ExecOperations
+
 ### Chore
 
-- Replaced deprecated project.exec with ExecOperations
 - Upgrade to Gradle 8.11.1
 
 ## [0.1.1] - 2024-11-09
