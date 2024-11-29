@@ -22,6 +22,7 @@ val projectDescription = listOf(
 plugins {
   alias(libs.plugins.kotlinJvm)
   alias(libs.plugins.mavenPublish)
+  alias(libs.plugins.testRetry)
   `java-gradle-plugin`
   `jvm-test-suite`
   signing
@@ -150,6 +151,11 @@ testing {
           dependsOn("jar")
           environment("PROJECT_ROOT", rootDir.absolutePath)
           shouldRunAfter("test", "testFeatures")
+          retry {
+            if (System.getenv().containsKey("CI")) {
+              maxRetries = 3
+            }
+          }
         }
       }
     }
