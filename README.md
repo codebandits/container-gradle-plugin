@@ -28,6 +28,7 @@ import dev.codebandits.container.gradle.tasks.ContainerRunTask
 
 tasks {
   register<ContainerRunTask>("writeHello") {
+    dockerPull { image = "alpine:latest" }
     dockerRun {
       image = "alpine:latest"
       entrypoint = "sh"

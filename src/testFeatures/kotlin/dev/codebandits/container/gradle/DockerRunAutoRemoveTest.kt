@@ -24,6 +24,7 @@ class DockerRunAutoRemoveTest : GradleProjectTest() {
       
       tasks {
         register<ContainerRunTask>("printID") {
+          dockerPull { image = "alpine:latest" }
           dockerRun {
             image = "alpine:latest"
             entrypoint = "echo"
@@ -62,6 +63,7 @@ class DockerRunAutoRemoveTest : GradleProjectTest() {
       
       tasks {
         register<ContainerRunTask>("printID") {
+          dockerPull { image = "alpine:latest" }
           dockerRun {
             image = "alpine:latest"
             entrypoint = "echo"
@@ -101,6 +103,7 @@ class DockerRunAutoRemoveTest : GradleProjectTest() {
       
       tasks {
         register<ContainerRunTask>("printID") {
+          dockerPull { image = "alpine:latest" }
           dockerRun {
             image = "alpine:latest"
             entrypoint = "echo"

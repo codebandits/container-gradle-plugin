@@ -5,6 +5,9 @@ plugins {
 }
 
 tasks.register('sayHello', ContainerRunTask) {
+    dockerPull {
+        it.image.set('alpine:latest')
+    }
     dockerRun {
         it.image.set('alpine:latest')
         it.args.set(['echo', 'Hello from a container!'] as String[])
@@ -12,6 +15,9 @@ tasks.register('sayHello', ContainerRunTask) {
 }
 
 tasks.register('writeHello', ContainerRunTask) {
+    dockerPull {
+        it.image.set('alpine:latest')
+    }
     dockerRun {
         it.image.set('alpine:latest')
         it.entrypoint.set('sh')

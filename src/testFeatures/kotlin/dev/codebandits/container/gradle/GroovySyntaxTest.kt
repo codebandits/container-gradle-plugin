@@ -33,6 +33,7 @@ class GroovySyntaxTest : GradleProjectTest() {
       
       tasks.register("buildImage", ContainerRunTask) {
         outputImages.dockerLocal("$imageReference")
+        dockerPull { it.image.set("docker:dind") }
         dockerRun {
           it.image.set("docker:dind")
           it.entrypoint.set("docker")

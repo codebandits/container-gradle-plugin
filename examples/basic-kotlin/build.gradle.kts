@@ -6,6 +6,9 @@ plugins {
 
 tasks {
   register<ContainerRunTask>("sayHello") {
+    dockerPull {
+      image = "alpine:latest"
+    }
     dockerRun {
       image = "alpine:latest"
       args = arrayOf("echo", "Hello from a container!")
@@ -13,6 +16,9 @@ tasks {
   }
 
   register<ContainerRunTask>("writeHello") {
+    dockerPull {
+      image = "alpine:latest"
+    }
     dockerRun {
       image = "alpine:latest"
       entrypoint = "sh"

@@ -21,6 +21,10 @@ class DockerHostPathTest : GradleProjectTest() {
       """
       tasks {
         register<ContainerRunTask>("helloWorld") {
+          dockerPull {
+            image = "alpine:latest"
+            dockerHost = "unix:///var/run/custom.sock"
+          }
           dockerRun {
             image = "alpine:latest"
             entrypoint = "echo"
@@ -61,6 +65,10 @@ class DockerHostPathTest : GradleProjectTest() {
       """
       tasks {
         register<ContainerRunTask>("echo") {
+          dockerPull {
+            image = "alpine:latest"
+            dockerHost = "unix:///var/run/custom.sock"
+          }
           dockerRun {
             image = "alpine:latest"
             entrypoint = "echo"

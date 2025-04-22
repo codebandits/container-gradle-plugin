@@ -23,6 +23,7 @@ class DockerRunUserTest : GradleProjectTest() {
       
       tasks {
         register<ContainerRunTask>("whoami") {
+          dockerPull { image = "alpine:latest" }
           dockerRun {
             image = "alpine:latest"
             user = "guest"
@@ -57,6 +58,7 @@ class DockerRunUserTest : GradleProjectTest() {
       
       tasks {
         register<ContainerRunTask>("whoami") {
+          dockerPull { image = "alpine:latest" }
           dockerRun {
             image = "alpine:latest"
             user = "root"

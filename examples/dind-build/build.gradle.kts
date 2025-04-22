@@ -9,6 +9,9 @@ tasks {
   register<ContainerRunTask>("buildImage") {
     inputs.file("Dockerfile")
     outputImages.dockerLocal("my-image:latest")
+    dockerPull {
+      image = "docker:dind"
+    }
     dockerRun {
       image = "docker:dind"
       entrypoint = "docker"

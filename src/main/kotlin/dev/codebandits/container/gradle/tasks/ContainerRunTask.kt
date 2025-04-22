@@ -1,6 +1,7 @@
 package dev.codebandits.container.gradle.tasks
 
 import com.github.dockerjava.api.async.ResultCallback
+import com.github.dockerjava.api.command.PullImageResultCallback
 import com.github.dockerjava.api.command.WaitContainerResultCallback
 import com.github.dockerjava.api.model.Bind
 import com.github.dockerjava.api.model.Frame
@@ -12,6 +13,17 @@ import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
 
 public abstract class ContainerRunTask : ContainerExecTask() {
+
+  public open class DockerPullSpec(objects: ObjectFactory) {
+    public val image: Property<String> = objects.property(String::class.java)
+    public val dockerHost: Property<String> = objects.property(String::class.java)
+  }
+
+  public open class DockerRemoveSpec(objects: ObjectFactory) {
+    public val image: Property<String> = objects.property(String::class.java)
+    public val dockerHost: Property<String> = objects.property(String::class.java)
+  }
+
   public open class DockerRunSpec(objects: ObjectFactory) {
     public val image: Property<String> = objects.property(String::class.java)
     public val volumes: Property<Array<String>> = objects.property(Array<String>::class.java).convention(emptyArray())
@@ -21,8 +33,40 @@ public abstract class ContainerRunTask : ContainerExecTask() {
     public val user: Property<String> = objects.property(String::class.java)
     public val privileged: Property<Boolean> = objects.property(Boolean::class.java).convention(false)
     public val autoRemove: Property<Boolean> = objects.property(Boolean::class.java).convention(true)
-    public val alwaysPull: Property<Boolean> = objects.property(Boolean::class.java).convention(true)
     public val dockerHost: Property<String> = objects.property(String::class.java)
+  }
+
+  public fun dockerPull(configure: DockerPullSpec.() -> Unit) {
+    steps.add(
+      ExecutionStep(
+        action = {
+          val spec = DockerPullSpec(project.objects).apply(configure)
+          val dockerHost = spec.dockerHost.orNull
+          val dockerClient = createDockerClient(dockerHost)
+
+          dockerClient
+            .pullImageCmd(spec.image.get())
+            .exec(PullImageResultCallback())
+            .awaitCompletion()
+        },
+      )
+    )
+  }
+
+  public fun dockerRemove(configure: DockerRemoveSpec.() -> Unit) {
+    steps.add(
+      ExecutionStep(
+        action = {
+          val spec = DockerRemoveSpec(project.objects).apply(configure)
+          val dockerHost = spec.dockerHost.orNull
+          val dockerClient = createDockerClient(dockerHost)
+
+          dockerClient
+            .removeImageCmd(spec.image.get())
+            .exec()
+        },
+      )
+    )
   }
 
   public fun dockerRun(configure: DockerRunSpec.() -> Unit) {

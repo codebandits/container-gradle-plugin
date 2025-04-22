@@ -28,6 +28,7 @@ class DockerRunTest : GradleProjectTest() {
       
       tasks {
         register<ContainerRunTask>("reportAlpineVersion") {
+          dockerPull { image = "alpine:3.18.9" }
           dockerRun {
             image = "alpine:3.18.9"
             entrypoint = "sh"
@@ -62,6 +63,7 @@ class DockerRunTest : GradleProjectTest() {
       
       tasks {
         register<ContainerRunTask>("beSuccessful") {
+          dockerPull { image = "alpine:latest" }
           dockerRun {
             image = "alpine:latest"
             entrypoint = "echo"
@@ -92,6 +94,7 @@ class DockerRunTest : GradleProjectTest() {
       
       tasks {
         register<ContainerRunTask>("alwaysFail") {
+          dockerPull { image = "alpine:latest" }
           dockerRun {
             image = "alpine:latest"
             entrypoint = "cat"
@@ -126,6 +129,7 @@ class DockerRunTest : GradleProjectTest() {
       
       tasks {
         register<ContainerRunTask>("outputTest") {
+          dockerPull { image = "alpine:latest" }
           dockerRun {
             image = "alpine:latest"
             entrypoint = "sh"
@@ -173,6 +177,7 @@ class DockerRunTest : GradleProjectTest() {
       
       tasks {
         register<ContainerRunTask>("secretDecoder") {
+          dockerPull { image = "alpine:latest" }
           dockerRun {
             image = "alpine:latest"
             entrypoint = "sh"

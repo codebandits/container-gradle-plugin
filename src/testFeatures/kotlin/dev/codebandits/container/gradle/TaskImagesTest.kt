@@ -98,6 +98,7 @@ class TaskImagesTest : GradleProjectTest() {
       tasks {
         register<ContainerRunTask>("buildImage") {
           outputImages.dockerLocal("$imageReference")
+          dockerPull { image = "docker:dind" }
           dockerRun {
             image = "docker:dind"
             entrypoint = "docker"

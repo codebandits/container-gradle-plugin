@@ -22,6 +22,7 @@ class DockerRunPrivilegedTest : GradleProjectTest() {
       
       tasks {
         register<ContainerRunTask>("accessMemory") {
+          dockerPull { image = "alpine:latest" }
           dockerRun {
             image = "alpine:latest"
             entrypoint = "ls"
@@ -53,6 +54,7 @@ class DockerRunPrivilegedTest : GradleProjectTest() {
       
       tasks {
         register<ContainerRunTask>("accessMemory") {
+          dockerPull { image = "alpine:latest" }
           dockerRun {
             image = "alpine:latest"
             entrypoint = "ls"

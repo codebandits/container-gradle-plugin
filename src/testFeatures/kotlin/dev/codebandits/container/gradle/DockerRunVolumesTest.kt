@@ -29,6 +29,7 @@ class DockerRunVolumesTest : GradleProjectTest() {
       
       tasks {
         register<ContainerRunTask>("readInput") {
+          dockerPull { image = "alpine:latest" }
           dockerRun {
             image = "alpine:latest"
             entrypoint = "cat"
@@ -69,6 +70,7 @@ class DockerRunVolumesTest : GradleProjectTest() {
       
       tasks {
         register<ContainerRunTask>("readInput") {
+          dockerPull { image = "alpine:latest" }
           dockerRun {
             image = "alpine:latest"
             entrypoint = "cat"
@@ -113,6 +115,7 @@ class DockerRunVolumesTest : GradleProjectTest() {
       
       tasks {
         register<ContainerRunTask>("inspectInputs") {
+          dockerPull { image = "alpine:latest" }
           dockerRun {
             image = "alpine:latest"
             entrypoint = "sh"

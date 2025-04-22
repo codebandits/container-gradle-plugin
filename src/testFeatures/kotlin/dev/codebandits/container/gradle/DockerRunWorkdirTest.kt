@@ -26,6 +26,7 @@ class DockerRunWorkdirTest : GradleProjectTest() {
       
       tasks {
         register<ContainerRunTask>("listMedia") {
+          dockerPull { image = "alpine:latest" }
           dockerRun {
             image = "alpine:latest"
             entrypoint = "ls"
@@ -66,6 +67,7 @@ class DockerRunWorkdirTest : GradleProjectTest() {
       
       tasks {
         register<ContainerRunTask>("listMedia") {
+          dockerPull { image = "alpine:latest" }
           dockerRun {
             image = "alpine:latest"
             entrypoint = "pwd"
@@ -103,6 +105,7 @@ class DockerRunWorkdirTest : GradleProjectTest() {
       
       tasks {
         register<ContainerRunTask>("listMedia") {
+          dockerPull { image = "alpine:latest" }
           dockerRun {
             image = "alpine:latest"
             entrypoint = "cat"

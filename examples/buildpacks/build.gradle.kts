@@ -10,6 +10,9 @@ tasks {
     inputs.file("index.html")
     inputs.file("project.toml")
     outputImages.dockerLocal("my-image:latest")
+    dockerPull {
+      image = "buildpacksio/pack:latest"
+    }
     dockerRun {
       image = "buildpacksio/pack:latest"
       args = arrayOf(

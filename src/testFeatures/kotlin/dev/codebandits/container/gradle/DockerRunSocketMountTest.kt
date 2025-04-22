@@ -23,6 +23,7 @@ class DockerRunSocketMountTest : GradleProjectTest() {
       
       tasks {
         register<ContainerRunTask>("dockerVersion") {
+          dockerPull { image = "curlimages/curl:latest" }
           dockerRun {
             image = "curlimages/curl:latest"
             user = "root"
