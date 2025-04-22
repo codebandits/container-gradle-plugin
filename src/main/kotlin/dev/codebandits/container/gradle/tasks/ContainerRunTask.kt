@@ -1,5 +1,13 @@
 package dev.codebandits.container.gradle.tasks
 
+import com.github.dockerjava.api.async.ResultCallback
+import com.github.dockerjava.api.command.WaitContainerResultCallback
+import com.github.dockerjava.api.model.Bind
+import com.github.dockerjava.api.model.Frame
+import com.github.dockerjava.api.model.HostConfig
+import com.github.dockerjava.api.model.StreamType
+import dev.codebandits.container.gradle.docker.createDockerClient
+import org.gradle.api.GradleException
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
 
@@ -18,39 +26,55 @@ public abstract class ContainerRunTask : ContainerExecTask() {
   }
 
   public fun dockerRun(configure: DockerRunSpec.() -> Unit) {
-    actionSteps.add(
+    steps.add(
       ExecutionStep(
-        execAction = {
+        action = {
           val spec = DockerRunSpec(project.objects).apply(configure)
-          val image = spec.image.get()
-          val options = mutableListOf<String>()
-          val user = spec.user.orNull
-          if (user != null) {
-            options.addAll(listOf("--user", user))
-          }
-          if (spec.privileged.get()) {
-            options.add("--privileged")
-          }
-          if (spec.autoRemove.get()) {
-            options.add("--rm")
-          }
-          spec.volumes.get().forEach { volume ->
-            options.addAll(listOf("--volume", volume))
-          }
-          val entrypoint = spec.entrypoint.orNull
-          if (entrypoint != null) {
-            options.addAll(listOf("--entrypoint", entrypoint))
-          }
-          val workdir = spec.workdir.orNull
-          if (workdir != null) {
-            options.addAll(listOf("--workdir", workdir))
-          }
-          val dockerArgs = arrayOf("run", *options.toTypedArray(), image, *spec.args.get())
-          executable = "docker"
-          args(*dockerArgs)
           val dockerHost = spec.dockerHost.orNull
-          if (dockerHost != null) {
-            environment("DOCKER_HOST", dockerHost)
+          val dockerClient = createDockerClient(dockerHost)
+
+          val hostConfig = HostConfig.newHostConfig()
+            .withAutoRemove(spec.autoRemove.get())
+            .withPrivileged(spec.privileged.get())
+            .withBinds(spec.volumes.get().map(Bind::parse))
+
+          val createContainerCmd = dockerClient.createContainerCmd(spec.image.get())
+            .withHostConfig(hostConfig)
+            .withCmd(*spec.args.get())
+            .let { cmd -> spec.user.orNull?.let { user -> cmd.withUser(user) } ?: cmd }
+            .let { cmd -> spec.entrypoint.orNull?.let { user -> cmd.withEntrypoint(user) } ?: cmd }
+            .let { cmd -> spec.workdir.orNull?.let { user -> cmd.withWorkingDir(user) } ?: cmd }
+
+          val container = createContainerCmd.exec()
+
+          dockerClient.startContainerCmd(container.id).exec()
+
+          val containerLogCallback = dockerClient
+            .logContainerCmd(container.id)
+            .withStdOut(true)
+            .withStdErr(true)
+            .withSince(0)
+            .withFollowStream(true)
+            .exec(object : ResultCallback.Adapter<Frame>() {
+              override fun onNext(frame: Frame) {
+                when (frame.streamType) {
+                  StreamType.STDOUT -> System.out.write(frame.payload)
+                  StreamType.STDERR -> System.err.write(frame.payload)
+                  else -> {}
+                }
+              }
+            })
+
+          val containerStatusCodeCallback = dockerClient
+            .waitContainerCmd(container.id)
+            .exec(WaitContainerResultCallback())
+
+          containerLogCallback.awaitCompletion()
+
+          val statusCode = containerStatusCodeCallback.awaitStatusCode()
+
+          if (statusCode != 0) {
+            throw GradleException("Container exited with status code $statusCode")
           }
         },
       )

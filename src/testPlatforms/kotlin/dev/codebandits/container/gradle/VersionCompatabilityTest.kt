@@ -15,6 +15,7 @@ class VersionCompatabilityTest : GradleProjectTest() {
 
   @ParameterizedTest(name = "run dockerRun using docker {0} java {1} gradle {2}")
   @CsvSource(
+    "27, TEMURIN_21, 8.13",
     "27, TEMURIN_21, 8.10.2",
     "26, OPENJDK_17, 7.6.4",
   )

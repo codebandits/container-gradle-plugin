@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- Remove the unreliable dependency on Docker CLI
+
 ### Chore
 
 - Upgrade project dependencies

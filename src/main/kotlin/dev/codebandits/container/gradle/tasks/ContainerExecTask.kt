@@ -6,12 +6,10 @@ import org.gradle.api.tasks.TaskAction
 
 public abstract class ContainerExecTask : DefaultTask() {
   @Internal
-  protected val actionSteps: MutableList<ExecutionStep> = mutableListOf<ExecutionStep>()
+  protected val steps: MutableList<ExecutionStep> = mutableListOf()
 
   @TaskAction
   public fun run() {
-    actionSteps.forEach { action ->
-      project.runExecutionStep(action)
-    }
+    steps.forEach(::run)
   }
 }

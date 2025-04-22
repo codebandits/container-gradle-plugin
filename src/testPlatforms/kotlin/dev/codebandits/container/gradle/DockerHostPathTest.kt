@@ -34,7 +34,7 @@ class DockerHostPathTest : GradleProjectTest() {
     val container = ContainerProvider.dockerJavaGradle(
       dockerVersion = "27",
       javaVersion = JavaVersion.TEMURIN_21,
-      gradleVersion = "8.10.2",
+      gradleVersion = "8.13",
     )
       .withFileSystemBind("/var/run/docker.sock", "/var/run/custom.sock", BindMode.READ_ONLY)
       .withCopyFileToContainer(MountableFile.forHostPath(projectDirectory), "/project")
@@ -74,7 +74,7 @@ class DockerHostPathTest : GradleProjectTest() {
     val container = ContainerProvider.dockerJavaGradle(
       dockerVersion = "27",
       javaVersion = JavaVersion.TEMURIN_21,
-      gradleVersion = "8.10.2",
+      gradleVersion = "8.13",
     )
       .withFileSystemBind("/var/run/docker.sock", "/var/run/docker.sock", BindMode.READ_ONLY)
       .withCopyFileToContainer(MountableFile.forHostPath(projectDirectory), "/project")
@@ -88,7 +88,7 @@ class DockerHostPathTest : GradleProjectTest() {
       container.stop()
     }
     expectThat(execResult).and {
-      get { stderr }.contains("docker: Cannot connect to the Docker daemon at unix:///wrong/path/to/docker.sock. Is the docker daemon running?")
+      get { stderr }.contains("java.net.SocketException: No such file or directory")
       get { exitCode }.isNotEqualTo(0)
     }
   }

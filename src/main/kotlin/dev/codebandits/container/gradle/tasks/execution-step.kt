@@ -1,20 +1,17 @@
 package dev.codebandits.container.gradle.tasks
 
-import org.gradle.api.Project
-import org.gradle.internal.extensions.core.serviceOf
-import org.gradle.process.ExecOperations
+import org.gradle.api.Action
+import org.gradle.api.Task
 import org.gradle.process.ExecResult
-import org.gradle.process.ExecSpec
 
 public class ExecutionStep(
-  public val execAction: ExecSpec.() -> Unit,
+  public val action: Action<Task>,
   public val resultHandler: ((ExecResult) -> Unit)? = null,
   public val shouldRun: () -> Boolean = { true },
 )
 
-internal fun Project.runExecutionStep(step: ExecutionStep) {
+internal fun Task.run(step: ExecutionStep) {
   if (step.shouldRun()) {
-    val result = serviceOf<ExecOperations>().exec(step.execAction)
-    step.resultHandler?.invoke(result)
+    apply(step.action::execute)
   }
 }

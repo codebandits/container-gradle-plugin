@@ -1,9 +1,12 @@
 package dev.codebandits.container.gradle.tasks
 
+import com.github.dockerjava.transport.DockerHttpClient
+import dev.codebandits.container.gradle.docker.createDockerClient
+import dev.codebandits.container.gradle.docker.createDockerHttpClient
+import org.gradle.api.GradleException
 import org.gradle.api.Task
 import org.gradle.api.file.RegularFile
 import org.gradle.api.provider.Provider
-import java.io.OutputStream
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
 
@@ -21,14 +24,26 @@ public abstract class TaskImages(private val task: Task) {
     val fileName = getImageReferenceFileName(imageReference)
     val imageIdentifierFileProvider = task.project.layout.buildDirectory.file("images/docker/local/$fileName")
     val updateStep = ExecutionStep(
-      execAction = {
+      action = {
         val file = imageIdentifierFileProvider.get().asFile
-        file.parentFile.mkdirs()
-        executable = "docker"
-        args("inspect", "--format", "{{.Id}}", imageReference)
-        standardOutput = imageIdentifierFileProvider.get().asFile.outputStream()
-        errorOutput = OutputStream.nullOutputStream()
-        isIgnoreExitValue = true
+        val dockerClient = createDockerClient()
+        try {
+          dockerClient.pingCmd().exec()
+          val inspectImageResponse = dockerClient.inspectImageCmd(imageReference).exec()
+          val imageId = inspectImageResponse.id
+          file.parentFile.mkdirs()
+          if (imageId != null) {
+            file.writeText(imageId)
+          } else {
+            file.delete()
+          }
+        } catch (exception: Exception) {
+          if (exception.javaClass.name == "com.github.dockerjava.api.exception.NotFoundException") {
+            file.delete()
+          } else {
+            throw exception
+          }
+        }
       },
       resultHandler = { result ->
         if (result.exitValue != 0) {
@@ -40,7 +55,7 @@ public abstract class TaskImages(private val task: Task) {
 
     return ImageIdentifierFileConfig(
       fileProvider = imageIdentifierFileProvider.map { regularFile ->
-        task.project.runExecutionStep(step = updateStep)
+        task.run(updateStep)
         regularFile
       },
       updateStep = updateStep,
@@ -54,13 +69,42 @@ public abstract class TaskImages(private val task: Task) {
     val fileName = getImageReferenceFileName(imageReference)
     val imageIdentifierFileProvider = task.project.layout.buildDirectory.file("images/docker/registry/$fileName")
     val updateStep = ExecutionStep(
-      execAction = {
+      action = {
         val file = imageIdentifierFileProvider.get().asFile
-        file.parentFile.mkdirs()
-        executable = "docker"
-        args("manifest", "inspect", imageReference)
-        standardOutput = file.outputStream()
-        isIgnoreExitValue = true
+        val dockerHttpClient = createDockerHttpClient()
+
+        val (repo, tag) = imageReference
+          .split(":", limit = 2)
+          .let { it[0] to it.getOrElse(1) { "latest" } }
+        val path = "/v2/$repo/manifests/$tag"
+
+        val request = DockerHttpClient.Request.builder()
+          .method(DockerHttpClient.Request.Method.GET)
+          .path(path)
+          .putHeader("Accept", "application/vnd.docker.distribution.manifest.v2+json")
+          .build()
+
+        dockerHttpClient.execute(request).use { response ->
+          when (response.statusCode) {
+            200 -> {
+              val digest = response.headers["Docker-Content-Digest"]?.firstOrNull()
+              if (digest != null) {
+                file.parentFile.mkdirs()
+                file.writeText(digest)
+              } else {
+                file.delete()
+              }
+            }
+
+            404 -> {
+              file.delete()
+            }
+
+            else -> throw GradleException(
+              "Failed to fetch manifest for $imageReference: HTTP ${response.statusCode}"
+            )
+          }
+        }
       },
       resultHandler = { result ->
         if (result.exitValue != 0) {
@@ -73,7 +117,7 @@ public abstract class TaskImages(private val task: Task) {
 
     return ImageIdentifierFileConfig(
       fileProvider = imageIdentifierFileProvider.map { regularFile ->
-        task.project.runExecutionStep(step = updateStep)
+        task.run(updateStep)
         regularFile
       },
       updateStep = updateStep,
@@ -103,7 +147,7 @@ public abstract class TaskImages(private val task: Task) {
         imageReference = imageReference,
       )
       task.outputs.file(config.fileProvider)
-      task.doLast { task -> task.project.runExecutionStep(config.updateStep) }
+      task.doLast { task -> task.run(config.updateStep) }
     }
 
     public fun dockerRegistry(imageReference: String, autoRefresh: Boolean = false) {
@@ -112,7 +156,7 @@ public abstract class TaskImages(private val task: Task) {
         autoRefresh = autoRefresh,
       )
       task.outputs.file(config.fileProvider)
-      task.doLast { task -> task.project.runExecutionStep(config.updateStep) }
+      task.doLast { task -> task.run(config.updateStep) }
     }
   }
 }
