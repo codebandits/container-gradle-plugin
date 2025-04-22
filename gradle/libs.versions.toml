@@ -1,12 +1,12 @@
 [versions]
-kotlin = "2.0.21" # https://github.com/JetBrains/kotlin/releases/latest
-junit-jupiter = "5.11.2" # https://github.com/junit-team/junit5/releases
+kotlin = "2.1.20" # https://github.com/JetBrains/kotlin/releases/latest
+junit-jupiter = "5.12.2" # https://github.com/junit-team/junit5/releases
 strikt = "0.35.1" # https://github.com/robfletcher/strikt/releases
-testcontainers = "1.20.3" # https://github.com/testcontainers/testcontainers-java/releases
-logback = "1.5.11" # https://github.com/qos-ch/logback/tags
-slf4j = "2.0.16" # https://github.com/qos-ch/slf4j/tags
-gradleMavenPublish = "0.30.0" # https://github.com/vanniktech/gradle-maven-publish-plugin/releases
-testRetryGradlePlugin = "1.6.0" # https://github.com/gradle/test-retry-gradle-plugin/releases
+testcontainers = "1.20.6" # https://github.com/testcontainers/testcontainers-java/releases
+logback = "1.5.18" # https://github.com/qos-ch/logback/tags
+slf4j = "2.0.17" # https://github.com/qos-ch/slf4j/tags
+gradleMavenPublish = "0.31.0" # https://github.com/vanniktech/gradle-maven-publish-plugin/releases
+testRetryGradlePlugin = "1.6.2" # https://github.com/gradle/test-retry-gradle-plugin/releases
 
 [libraries]
 strikt-core = { module = "io.strikt:strikt-core", version.ref = "strikt" }
