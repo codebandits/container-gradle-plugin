@@ -44,6 +44,9 @@ class GroovySyntaxTest : GradleProjectTest() {
             "/var/run/docker.sock:/var/run/docker.sock:ro",
           ] as String[])
         }
+        doLast {
+          container.outputs.captureLocalImage("$imageReference")
+        }
       }
       """.trimIndent()
     )

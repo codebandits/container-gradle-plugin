@@ -14,10 +14,10 @@ public abstract class ContainerTaskExtension(task: Task) {
 
   public class Inputs internal constructor(private val task: Task) {
     public fun localImage(imageReference: String) {
-      val trackingFile = task.getLocalImageTrackingFile(imageReference)
-      task.inputs.file(trackingFile.map { regularFile ->
-        writeLocalImageId(imageReference, regularFile)
-        regularFile
+      val trackingFileProvider = task.getLocalImageTrackingFile(imageReference)
+      task.inputs.file(trackingFileProvider.map { trackingFile ->
+        writeLocalImageId(imageReference, trackingFile)
+        trackingFile
       })
     }
 
@@ -34,28 +34,37 @@ public abstract class ContainerTaskExtension(task: Task) {
 
   public class Outputs internal constructor(private val task: Task) {
     public fun localImage(imageReference: String) {
-      val trackingFile = task.getLocalImageTrackingFile(imageReference)
-      task.outputs.file(trackingFile.map { regularFile ->
-        writeLocalImageId(imageReference, regularFile)
-        regularFile
+      val trackingFileProvider = task.getLocalImageTrackingFile(imageReference)
+      task.outputs.file(trackingFileProvider.map { trackingFile ->
+        writeLocalImageId(imageReference, trackingFile)
+        trackingFile
       })
-      task.doLast { writeLocalImageId(imageReference, trackingFile.get()) }
+    }
+
+    public fun captureLocalImage(imageReference: String) {
+      val trackingFile = task.getLocalImageTrackingFile(imageReference).get()
+      writeLocalImageId(imageReference, trackingFile)
     }
 
     public fun registryImage(imageReference: String, autoRefresh: Boolean = false) {
-      val trackingFile = task.getLocalImageTrackingFile(imageReference)
-      task.outputs.file(trackingFile.map { regularFile ->
-        if (autoRefresh || !regularFile.asFile.exists()) {
-          writeRegistryImageDigest(imageReference, regularFile)
+      val trackingFileProvider = task.getRegistryImageTrackingFile(imageReference)
+      task.outputs.file(trackingFileProvider.map { trackingFile ->
+        if (autoRefresh || !trackingFile.asFile.exists()) {
+          writeRegistryImageDigest(imageReference, trackingFile)
         }
-        regularFile
+        trackingFile
       })
       task.doLast {
-        val regularFile = trackingFile.get()
+        val regularFile = trackingFileProvider.get()
         if (autoRefresh || !regularFile.asFile.exists()) {
           writeRegistryImageDigest(imageReference, regularFile)
         }
       }
+    }
+
+    public fun captureRegistryImage(imageReference: String) {
+      val trackingFile = task.getRegistryImageTrackingFile(imageReference).get()
+      writeRegistryImageDigest(imageReference, trackingFile)
     }
   }
 }
@@ -74,8 +83,8 @@ private fun Task.getRegistryImageTrackingFile(
   return project.layout.buildDirectory.file("images/registry/$fileName")
 }
 
-private fun writeLocalImageId(imageReference: String, regularFile: RegularFile) {
-  val file = regularFile.asFile
+private fun writeLocalImageId(imageReference: String, trackingFile: RegularFile) {
+  val file = trackingFile.asFile
   if (!file.parentFile.exists()) {
     file.parentFile.mkdirs()
   }
@@ -83,8 +92,8 @@ private fun writeLocalImageId(imageReference: String, regularFile: RegularFile) 
   file.writeText(imageId ?: "")
 }
 
-private fun writeRegistryImageDigest(imageReference: String, regularFile: RegularFile) {
-  val file = regularFile.asFile
+private fun writeRegistryImageDigest(imageReference: String, trackingFile: RegularFile) {
+  val file = trackingFile.asFile
   if (!file.parentFile.exists()) {
     file.parentFile.mkdirs()
   }

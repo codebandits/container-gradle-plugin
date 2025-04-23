@@ -33,5 +33,8 @@ tasks {
         "/var/run/docker.sock:/var/run/docker.sock:ro",
       )
     }
+    doLast {
+      container.outputs.captureLocalImage("my-image:latest")
+    }
   }
 }

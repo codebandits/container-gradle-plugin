@@ -109,6 +109,9 @@ class TaskImagesTest : GradleProjectTest() {
               "/var/run/docker.sock:/var/run/docker.sock:ro",
             )
           }
+          doLast {
+            container.outputs.captureLocalImage("$imageReference")
+          }
         }
       }
       """.trimIndent()
