@@ -5,7 +5,7 @@ import org.gradle.api.Task
 import org.gradle.process.ExecResult
 
 public class ExecutionStep(
-  public val action: Action<Task>,
+  public val action: () -> Unit,
   public val resultHandler: ((ExecResult) -> Unit)? = null,
   public val shouldRun: () -> Boolean = { true },
 )

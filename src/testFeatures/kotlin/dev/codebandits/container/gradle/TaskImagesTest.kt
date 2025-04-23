@@ -15,14 +15,14 @@ import kotlin.io.path.createTempDirectory
 class TaskImagesTest : GradleProjectTest() {
 
   @Test
-  fun `inputImages dockerLocal checks local image state for up-to-date determination`() {
+  fun `inputLocalImage checks local image state for up-to-date determination`() {
     val imageReference = generateUniqueImageReference()
 
     updateImage(imageReference = imageReference)
 
     buildGradleKtsFile.appendLine(
       """
-      import dev.codebandits.container.gradle.tasks.inputImages
+      import dev.codebandits.container.gradle.tasks.inputLocalImage
       
       plugins {
         id("dev.codebandits.container")
@@ -30,7 +30,7 @@ class TaskImagesTest : GradleProjectTest() {
       
       tasks {
         register("useImage") {
-          inputImages.dockerLocal("$imageReference")
+          inputLocalImage("$imageReference")
           outputs.upToDateWhen { true }
           doLast { }
         }
@@ -75,7 +75,7 @@ class TaskImagesTest : GradleProjectTest() {
   }
 
   @Test
-  fun `outputImages dockerLocal checks local image state for up-to-date determination`() {
+  fun `outputLocalImage checks local image state for up-to-date determination`() {
     val imageReference = generateUniqueImageReference()
 
     projectDirectory.resolve("index.html").createFile()
@@ -89,7 +89,7 @@ class TaskImagesTest : GradleProjectTest() {
     buildGradleKtsFile.appendLine(
       """
       import dev.codebandits.container.gradle.tasks.ContainerTask
-      import dev.codebandits.container.gradle.tasks.outputImages
+      import dev.codebandits.container.gradle.tasks.outputLocalImage
       
       plugins {
         id("dev.codebandits.container")
@@ -97,7 +97,7 @@ class TaskImagesTest : GradleProjectTest() {
       
       tasks {
         register<ContainerTask>("buildImage") {
-          outputImages.dockerLocal("$imageReference")
+          outputLocalImage("$imageReference")
           dockerPull { image = "docker:dind" }
           dockerRun {
             image = "docker:dind"
@@ -151,10 +151,10 @@ class TaskImagesTest : GradleProjectTest() {
   }
 
   @Test
-  fun `inputImages dockerRegistry checks remote image state for up-to-date determination`() {
+  fun `inputRegistryImage checks remote image state for up-to-date determination`() {
     buildGradleKtsFile.appendLine(
       """
-      import dev.codebandits.container.gradle.tasks.inputImages
+      import dev.codebandits.container.gradle.tasks.inputRegistryImage
       
       plugins {
         id("dev.codebandits.container")
@@ -162,7 +162,7 @@ class TaskImagesTest : GradleProjectTest() {
       
       tasks {
         register("useImage") {
-          inputImages.dockerRegistry("alpine:latest")
+          inputRegistryImage("alpine:latest")
           outputs.upToDateWhen { true }
           doLast { }
         }
@@ -194,10 +194,10 @@ class TaskImagesTest : GradleProjectTest() {
   }
 
   @Test
-  fun `inputImages dockerRegistry can check fully qualified Docker Hub images`() {
+  fun `inputRegistryImage can check fully qualified Docker Hub images`() {
     buildGradleKtsFile.appendLine(
       """
-      import dev.codebandits.container.gradle.tasks.inputImages
+      import dev.codebandits.container.gradle.tasks.inputRegistryImage
       
       plugins {
         id("dev.codebandits.container")
@@ -205,7 +205,7 @@ class TaskImagesTest : GradleProjectTest() {
       
       tasks {
         register("useImage") {
-          inputImages.dockerRegistry("docker.io/library/alpine:latest")
+          inputRegistryImage("docker.io/library/alpine:latest")
           outputs.upToDateWhen { true }
           doLast { }
         }
@@ -224,10 +224,10 @@ class TaskImagesTest : GradleProjectTest() {
   }
 
   @Test
-  fun `inputImages dockerRegistry can check fully qualified Quay images`() {
+  fun `inputRegistryImage can check fully qualified Quay images`() {
     buildGradleKtsFile.appendLine(
       """
-      import dev.codebandits.container.gradle.tasks.inputImages
+      import dev.codebandits.container.gradle.tasks.inputRegistryImage
       
       plugins {
         id("dev.codebandits.container")
@@ -235,7 +235,7 @@ class TaskImagesTest : GradleProjectTest() {
       
       tasks {
         register("useImage") {
-          inputImages.dockerRegistry("quay.io/argoproj/argocd:latest")
+          inputRegistryImage("quay.io/argoproj/argocd:latest")
           outputs.upToDateWhen { true }
           doLast { }
         }
@@ -254,10 +254,10 @@ class TaskImagesTest : GradleProjectTest() {
   }
 
   @Test
-  fun `inputImages dockerRegistry can check fully qualified GHCR images`() {
+  fun `inputRegistryImage can check fully qualified GHCR images`() {
     buildGradleKtsFile.appendLine(
       """
-      import dev.codebandits.container.gradle.tasks.inputImages
+      import dev.codebandits.container.gradle.tasks.inputRegistryImage
       
       plugins {
         id("dev.codebandits.container")
@@ -265,7 +265,7 @@ class TaskImagesTest : GradleProjectTest() {
       
       tasks {
         register("useImage") {
-          inputImages.dockerRegistry("ghcr.io/linuxserver/kasm:latest")
+          inputRegistryImage("ghcr.io/linuxserver/kasm:latest")
           outputs.upToDateWhen { true }
           doLast { }
         }

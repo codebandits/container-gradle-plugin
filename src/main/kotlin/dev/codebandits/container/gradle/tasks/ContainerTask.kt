@@ -24,7 +24,7 @@ public abstract class ContainerTask : DefaultTask() {
   public fun run() {
     steps.forEach { step ->
       if (step.shouldRun()) {
-        apply(step.action::execute)
+        step.action()
       }
     }
   }

@@ -11,7 +11,7 @@ import java.net.http.HttpResponse
 internal object Registry {
   private val httpClient = HttpClient.newBuilder().build()
 
-  internal fun getDigest(imageReference: String): String {
+  internal fun getDigest(imageReference: String): String? {
     val imageReferenceParts = imageReference.toImageReferenceParts()
     val httpResponse = run {
       val httpRequest = buildRegistryManifestRequest(imageReferenceParts)
@@ -21,6 +21,8 @@ internal object Registry {
     return when (httpResponse.statusCode()) {
       200 -> httpResponse.headers().firstValue("Docker-Content-Digest")
         .orElseThrow { GradleException("Expected Docker-Content-Digest header from registry: ${httpResponse.headers()}") }
+
+      404 -> null
 
       else -> throw GradleException("Failed to fetch manifest for $imageReference: HTTP ${httpResponse.statusCode()}")
     }

@@ -1,5 +1,5 @@
 import dev.codebandits.container.gradle.tasks.ContainerTask
-import dev.codebandits.container.gradle.tasks.outputImages
+import dev.codebandits.container.gradle.tasks.outputLocalImage
 
 plugins {
   id("dev.codebandits.container")
@@ -9,7 +9,7 @@ tasks {
   register<ContainerTask>("buildImage") {
     inputs.file("index.html")
     inputs.file("project.toml")
-    outputImages.dockerLocal("my-image:latest")
+    outputLocalImage("my-image:latest")
     dockerPull {
       image = "buildpacksio/pack:latest"
     }
