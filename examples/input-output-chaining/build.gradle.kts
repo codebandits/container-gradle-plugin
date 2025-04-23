@@ -1,5 +1,4 @@
-import dev.codebandits.container.gradle.image.inputLocalImage
-import dev.codebandits.container.gradle.image.outputLocalImage
+import dev.codebandits.container.gradle.container
 import dev.codebandits.container.gradle.tasks.ContainerTask
 import org.gradle.kotlin.dsl.support.serviceOf
 
@@ -10,7 +9,7 @@ plugins {
 tasks {
   register("printImageID") {
     dependsOn("buildImage")
-    inputLocalImage("my-image:latest")
+    container.inputLocalImage("my-image:latest")
     doLast {
       serviceOf<ExecOperations>().exec {
         commandLine("sh", "-c", "docker images --filter reference=my-image:latest --format {{.ID}}")
@@ -20,7 +19,7 @@ tasks {
 
   register<ContainerTask>("buildImage") {
     inputs.file("Dockerfile")
-    outputLocalImage("my-image:latest")
+    container.outputLocalImage("my-image:latest")
     dockerPull {
       image = "docker:dind"
     }

@@ -1,6 +1,6 @@
 package dev.codebandits.container.gradle.plugin
 
-import dev.codebandits.container.gradle.image.ContainerTaskExtension
+import dev.codebandits.container.gradle.ContainerTaskExtension
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 

@@ -1,4 +1,4 @@
-import dev.codebandits.container.gradle.image.outputLocalImage
+import dev.codebandits.container.gradle.container
 import dev.codebandits.container.gradle.tasks.ContainerTask
 
 plugins {
@@ -8,7 +8,7 @@ plugins {
 tasks {
   register<ContainerTask>("buildImage") {
     inputs.file("Dockerfile")
-    outputLocalImage("my-image:latest")
+    container.outputLocalImage("my-image:latest")
     dockerPull {
       image = "docker:dind"
     }

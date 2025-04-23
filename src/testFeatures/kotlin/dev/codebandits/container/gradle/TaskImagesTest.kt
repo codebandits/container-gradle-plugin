@@ -22,7 +22,7 @@ class TaskImagesTest : GradleProjectTest() {
 
     buildGradleKtsFile.appendLine(
       """
-      import dev.codebandits.container.gradle.image.inputLocalImage
+      import dev.codebandits.container.gradle.container
       
       plugins {
         id("dev.codebandits.container")
@@ -30,7 +30,7 @@ class TaskImagesTest : GradleProjectTest() {
       
       tasks {
         register("useImage") {
-          inputLocalImage("$imageReference")
+          container.inputLocalImage("$imageReference")
           outputs.upToDateWhen { true }
           doLast { }
         }
@@ -88,8 +88,8 @@ class TaskImagesTest : GradleProjectTest() {
 
     buildGradleKtsFile.appendLine(
       """
+      import dev.codebandits.container.gradle.container
       import dev.codebandits.container.gradle.tasks.ContainerTask
-      import dev.codebandits.container.gradle.image.outputLocalImage
       
       plugins {
         id("dev.codebandits.container")
@@ -97,7 +97,7 @@ class TaskImagesTest : GradleProjectTest() {
       
       tasks {
         register<ContainerTask>("buildImage") {
-          outputLocalImage("$imageReference")
+          container.outputLocalImage("$imageReference")
           dockerPull { image = "docker:dind" }
           dockerRun {
             image = "docker:dind"
@@ -154,7 +154,7 @@ class TaskImagesTest : GradleProjectTest() {
   fun `inputRegistryImage checks remote image state for up-to-date determination`() {
     buildGradleKtsFile.appendLine(
       """
-      import dev.codebandits.container.gradle.image.inputRegistryImage
+      import dev.codebandits.container.gradle.container
       
       plugins {
         id("dev.codebandits.container")
@@ -162,7 +162,7 @@ class TaskImagesTest : GradleProjectTest() {
       
       tasks {
         register("useImage") {
-          inputRegistryImage("hello-world:latest")
+          container.inputRegistryImage("hello-world:latest")
           outputs.upToDateWhen { true }
           doLast { }
         }
@@ -197,7 +197,7 @@ class TaskImagesTest : GradleProjectTest() {
   fun `inputRegistryImage can check fully qualified Docker Hub images`() {
     buildGradleKtsFile.appendLine(
       """
-      import dev.codebandits.container.gradle.image.inputRegistryImage
+      import dev.codebandits.container.gradle.container
       
       plugins {
         id("dev.codebandits.container")
@@ -205,7 +205,7 @@ class TaskImagesTest : GradleProjectTest() {
       
       tasks {
         register("useImage") {
-          inputRegistryImage("docker.io/library/hello-world:latest")
+          container.inputRegistryImage("docker.io/library/hello-world:latest")
           outputs.upToDateWhen { true }
           doLast { }
         }
@@ -227,7 +227,7 @@ class TaskImagesTest : GradleProjectTest() {
   fun `inputRegistryImage can check fully qualified Quay images`() {
     buildGradleKtsFile.appendLine(
       """
-      import dev.codebandits.container.gradle.image.inputRegistryImage
+      import dev.codebandits.container.gradle.container
       
       plugins {
         id("dev.codebandits.container")
@@ -235,7 +235,7 @@ class TaskImagesTest : GradleProjectTest() {
       
       tasks {
         register("useImage") {
-          inputRegistryImage("quay.io/argoproj/argocd:latest")
+          container.inputRegistryImage("quay.io/argoproj/argocd:latest")
           outputs.upToDateWhen { true }
           doLast { }
         }
@@ -257,7 +257,7 @@ class TaskImagesTest : GradleProjectTest() {
   fun `inputRegistryImage can check fully qualified GHCR images`() {
     buildGradleKtsFile.appendLine(
       """
-      import dev.codebandits.container.gradle.image.inputRegistryImage
+      import dev.codebandits.container.gradle.container
       
       plugins {
         id("dev.codebandits.container")
@@ -265,7 +265,7 @@ class TaskImagesTest : GradleProjectTest() {
       
       tasks {
         register("useImage") {
-          inputRegistryImage("ghcr.io/linuxserver/kasm:latest")
+          container.inputRegistryImage("ghcr.io/linuxserver/kasm:latest")
           outputs.upToDateWhen { true }
           doLast { }
         }

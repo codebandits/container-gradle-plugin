@@ -36,8 +36,8 @@ class BuildpacksIntegrationTest : GradleProjectTest() {
 
     buildGradleKtsFile.appendLine(
       """
+      import dev.codebandits.container.gradle.container
       import dev.codebandits.container.gradle.tasks.ContainerTask
-      import dev.codebandits.container.gradle.image.outputLocalImage
       
       plugins {
         id("dev.codebandits.container")
@@ -45,7 +45,7 @@ class BuildpacksIntegrationTest : GradleProjectTest() {
       
       tasks {
         register<ContainerTask>("buildImage") {
-          outputLocalImage("$imageReference")
+          container.outputLocalImage("$imageReference")
           dockerPull {
             image = "buildpacksio/pack:latest"
           }
