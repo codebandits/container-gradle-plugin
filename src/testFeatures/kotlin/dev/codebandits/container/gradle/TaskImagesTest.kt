@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test
 import strikt.api.expectThat
 import strikt.assertions.isEqualTo
 import strikt.assertions.isNotNull
-import java.util.UUID
+import java.util.*
 import kotlin.io.path.absolutePathString
 import kotlin.io.path.createFile
 import kotlin.io.path.createTempDirectory
@@ -15,7 +15,7 @@ import kotlin.io.path.createTempDirectory
 class TaskImagesTest : GradleProjectTest() {
 
   @Test
-  fun `inputImages dockerLocal checks external image state for up-to-date determination`() {
+  fun `inputImages dockerLocal checks local image state for up-to-date determination`() {
     val imageReference = generateUniqueImageReference()
 
     updateImage(imageReference = imageReference)
@@ -75,7 +75,7 @@ class TaskImagesTest : GradleProjectTest() {
   }
 
   @Test
-  fun `outputImages dockerLocal checks external image state for up-to-date determination`() {
+  fun `outputImages dockerLocal checks local image state for up-to-date determination`() {
     val imageReference = generateUniqueImageReference()
 
     projectDirectory.resolve("index.html").createFile()
@@ -148,6 +148,139 @@ class TaskImagesTest : GradleProjectTest() {
       expectThat(result).get { task(":buildImage") }.isNotNull()
         .get { outcome }.isEqualTo(TaskOutcome.SUCCESS)
     }
+  }
+
+  @Test
+  fun `inputImages dockerRegistry checks remote image state for up-to-date determination`() {
+    buildGradleKtsFile.appendLine(
+      """
+      import dev.codebandits.container.gradle.tasks.inputImages
+      
+      plugins {
+        id("dev.codebandits.container")
+      }
+      
+      tasks {
+        register("useImage") {
+          inputImages.dockerRegistry("alpine:latest")
+          outputs.upToDateWhen { true }
+          doLast { }
+        }
+      }
+      """.trimIndent()
+    )
+
+    run {
+      val result = GradleRunner.create()
+        .withPluginClasspath()
+        .withProjectDir(projectDirectory.toFile())
+        .withArguments("useImage")
+        .build()
+
+      expectThat(result).get { task(":useImage") }.isNotNull()
+        .get { outcome }.isEqualTo(TaskOutcome.SUCCESS)
+    }
+
+    run {
+      val result = GradleRunner.create()
+        .withPluginClasspath()
+        .withProjectDir(projectDirectory.toFile())
+        .withArguments("useImage")
+        .build()
+
+      expectThat(result).get { task(":useImage") }.isNotNull()
+        .get { outcome }.isEqualTo(TaskOutcome.UP_TO_DATE)
+    }
+  }
+
+  @Test
+  fun `inputImages dockerRegistry can check fully qualified Docker Hub images`() {
+    buildGradleKtsFile.appendLine(
+      """
+      import dev.codebandits.container.gradle.tasks.inputImages
+      
+      plugins {
+        id("dev.codebandits.container")
+      }
+      
+      tasks {
+        register("useImage") {
+          inputImages.dockerRegistry("docker.io/library/alpine:latest")
+          outputs.upToDateWhen { true }
+          doLast { }
+        }
+      }
+      """.trimIndent()
+    )
+
+    val result = GradleRunner.create()
+      .withPluginClasspath()
+      .withProjectDir(projectDirectory.toFile())
+      .withArguments("useImage")
+      .build()
+
+    expectThat(result).get { task(":useImage") }.isNotNull()
+      .get { outcome }.isEqualTo(TaskOutcome.SUCCESS)
+  }
+
+  @Test
+  fun `inputImages dockerRegistry can check fully qualified Quay images`() {
+    buildGradleKtsFile.appendLine(
+      """
+      import dev.codebandits.container.gradle.tasks.inputImages
+      
+      plugins {
+        id("dev.codebandits.container")
+      }
+      
+      tasks {
+        register("useImage") {
+          inputImages.dockerRegistry("quay.io/argoproj/argocd:latest")
+          outputs.upToDateWhen { true }
+          doLast { }
+        }
+      }
+      """.trimIndent()
+    )
+
+    val result = GradleRunner.create()
+      .withPluginClasspath()
+      .withProjectDir(projectDirectory.toFile())
+      .withArguments("useImage")
+      .build()
+
+    expectThat(result).get { task(":useImage") }.isNotNull()
+      .get { outcome }.isEqualTo(TaskOutcome.SUCCESS)
+  }
+
+  @Test
+  fun `inputImages dockerRegistry can check fully qualified GHCR images`() {
+    buildGradleKtsFile.appendLine(
+      """
+      import dev.codebandits.container.gradle.tasks.inputImages
+      
+      plugins {
+        id("dev.codebandits.container")
+      }
+      
+      tasks {
+        register("useImage") {
+          inputImages.dockerRegistry("ghcr.io/linuxserver/kasm:latest")
+          outputs.upToDateWhen { true }
+          doLast { }
+        }
+      }
+      """.trimIndent()
+    )
+
+    val result = GradleRunner.create()
+      .withPluginClasspath()
+      .withProjectDir(projectDirectory.toFile())
+      .withArguments("useImage")
+      .build()
+
+    expectThat(result).get { task(":useImage") }.isNotNull()
+      .get { outcome }.isEqualTo(TaskOutcome.SUCCESS)
   }
 
   private fun updateImage(imageReference: String) {

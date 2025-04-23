@@ -1,14 +1,13 @@
 package dev.codebandits.container.gradle.tasks
 
-import com.github.dockerjava.transport.DockerHttpClient
-import dev.codebandits.container.gradle.docker.createDockerClient
-import dev.codebandits.container.gradle.docker.createDockerHttpClient
-import org.gradle.api.GradleException
+import dev.codebandits.container.gradle.docker.Docker
+import dev.codebandits.container.gradle.docker.Registry
 import org.gradle.api.Task
 import org.gradle.api.file.RegularFile
 import org.gradle.api.provider.Provider
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
+
 
 public abstract class TaskImages(private val task: Task) {
   protected class ImageIdentifierFileConfig(
@@ -17,7 +16,7 @@ public abstract class TaskImages(private val task: Task) {
   )
 
   private fun getImageReferenceFileName(imageReference: String): String {
-    return URLEncoder.encode(normalizeDockerImageReference(imageReference), StandardCharsets.UTF_8)
+    return URLEncoder.encode(imageReference.toImageReferenceParts().normalized, StandardCharsets.UTF_8)
   }
 
   protected fun getDockerLocalImageIdentifierFileConfig(imageReference: String): ImageIdentifierFileConfig {
@@ -26,7 +25,7 @@ public abstract class TaskImages(private val task: Task) {
     val updateStep = ExecutionStep(
       action = {
         val file = imageIdentifierFileProvider.get().asFile
-        val dockerClient = createDockerClient()
+        val dockerClient = Docker.createClient()
         try {
           dockerClient.pingCmd().exec()
           val inspectImageResponse = dockerClient.inspectImageCmd(imageReference).exec()
@@ -71,40 +70,9 @@ public abstract class TaskImages(private val task: Task) {
     val updateStep = ExecutionStep(
       action = {
         val file = imageIdentifierFileProvider.get().asFile
-        val dockerHttpClient = createDockerHttpClient()
-
-        val (repo, tag) = imageReference
-          .split(":", limit = 2)
-          .let { it[0] to it.getOrElse(1) { "latest" } }
-        val path = "/v2/$repo/manifests/$tag"
-
-        val request = DockerHttpClient.Request.builder()
-          .method(DockerHttpClient.Request.Method.GET)
-          .path(path)
-          .putHeader("Accept", "application/vnd.docker.distribution.manifest.v2+json")
-          .build()
-
-        dockerHttpClient.execute(request).use { response ->
-          when (response.statusCode) {
-            200 -> {
-              val digest = response.headers["Docker-Content-Digest"]?.firstOrNull()
-              if (digest != null) {
-                file.parentFile.mkdirs()
-                file.writeText(digest)
-              } else {
-                file.delete()
-              }
-            }
-
-            404 -> {
-              file.delete()
-            }
-
-            else -> throw GradleException(
-              "Failed to fetch manifest for $imageReference: HTTP ${response.statusCode}"
-            )
-          }
-        }
+        val digest = Registry.getDigest(imageReference)
+        file.parentFile.mkdirs()
+        file.writeText(digest)
       },
       resultHandler = { result ->
         if (result.exitValue != 0) {

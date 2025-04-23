@@ -7,7 +7,7 @@ import com.github.dockerjava.api.model.Bind
 import com.github.dockerjava.api.model.Frame
 import com.github.dockerjava.api.model.HostConfig
 import com.github.dockerjava.api.model.StreamType
-import dev.codebandits.container.gradle.docker.createDockerClient
+import dev.codebandits.container.gradle.docker.Docker
 import org.gradle.api.DefaultTask
 import org.gradle.api.GradleException
 import org.gradle.api.model.ObjectFactory
@@ -57,7 +57,7 @@ public abstract class ContainerTask : DefaultTask() {
         action = {
           val spec = DockerPullSpec(project.objects).apply(configure)
           val dockerHost = spec.dockerHost.orNull
-          val dockerClient = createDockerClient(dockerHost)
+          val dockerClient = Docker.createClient(dockerHost)
 
           dockerClient
             .pullImageCmd(spec.image.get())
@@ -74,7 +74,7 @@ public abstract class ContainerTask : DefaultTask() {
         action = {
           val spec = DockerRemoveSpec(project.objects).apply(configure)
           val dockerHost = spec.dockerHost.orNull
-          val dockerClient = createDockerClient(dockerHost)
+          val dockerClient = Docker.createClient(dockerHost)
 
           dockerClient
             .removeImageCmd(spec.image.get())
@@ -90,7 +90,7 @@ public abstract class ContainerTask : DefaultTask() {
         action = {
           val spec = DockerRunSpec(project.objects).apply(configure)
           val dockerHost = spec.dockerHost.orNull
-          val dockerClient = createDockerClient(dockerHost)
+          val dockerClient = Docker.createClient(dockerHost)
 
           val hostConfig = HostConfig.newHostConfig()
             .withAutoRemove(spec.autoRemove.get())

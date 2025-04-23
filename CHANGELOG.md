@@ -11,9 +11,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### Changed
+### Chore
 
-- Rename ContainerRunTask to ContainerTask
+- Rename ContainerRunTask to ContainerTask.
+
+### Fixed
+
+- Registry image references now correctly fetch their digest from the remote registry.
 
 ## [0.2.0] - 2025-04-22
 
