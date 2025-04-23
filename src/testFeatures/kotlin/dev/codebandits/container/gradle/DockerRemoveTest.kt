@@ -15,7 +15,7 @@ class DockerRemoveTest : GradleProjectTest() {
 
   @Test
   fun `dockerRemove removes the specified image`() {
-    pullImage("alpine:3.18.9")
+    pullImage("hello-world:latest")
 
     buildGradleKtsFile.appendLine(
       """
@@ -26,9 +26,9 @@ class DockerRemoveTest : GradleProjectTest() {
       }
       
       tasks {
-        register<ContainerTask>("removeAlpineImage") {
+        register<ContainerTask>("removeImage") {
           dockerRemove {
-            image = "alpine:3.18.9"
+            image = "hello-world:latest"
           }
         }
       }
@@ -38,14 +38,14 @@ class DockerRemoveTest : GradleProjectTest() {
     val result = GradleRunner.create()
       .withPluginClasspath()
       .withProjectDir(projectDirectory.toFile())
-      .withArguments("removeAlpineImage")
+      .withArguments("removeImage")
       .build()
 
     expectThat(result).and {
-      get { task(":removeAlpineImage") }.isNotNull().get { outcome }.isEqualTo(TaskOutcome.SUCCESS)
+      get { task(":removeImage") }.isNotNull().get { outcome }.isEqualTo(TaskOutcome.SUCCESS)
     }
 
-    expectThat(imageExists("alpine:3.18.9")).isFalse()
+    expectThat(imageExists("hello-world:latest")).isFalse()
   }
 
   @Test

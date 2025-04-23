@@ -9,13 +9,13 @@ import strikt.assertions.contains
 import strikt.assertions.isEqualTo
 import strikt.assertions.isNotNull
 import strikt.assertions.isTrue
-import java.util.UUID
+import java.util.*
 
 class DockerPullTest : GradleProjectTest() {
 
   @Test
   fun `dockerPull pulls the specified image`() {
-    removeImage("alpine:3.18.9")
+    removeImage("hello-world:latest")
 
     buildGradleKtsFile.appendLine(
       """
@@ -26,9 +26,9 @@ class DockerPullTest : GradleProjectTest() {
       }
       
       tasks {
-        register<ContainerTask>("pullAlpineImage") {
+        register<ContainerTask>("pullImage") {
           dockerPull {
-            image = "alpine:3.18.9"
+            image = "hello-world:latest"
           }
         }
       }
@@ -38,14 +38,14 @@ class DockerPullTest : GradleProjectTest() {
     val result = GradleRunner.create()
       .withPluginClasspath()
       .withProjectDir(projectDirectory.toFile())
-      .withArguments("pullAlpineImage")
+      .withArguments("pullImage")
       .build()
 
     expectThat(result).and {
-      get { task(":pullAlpineImage") }.isNotNull().get { outcome }.isEqualTo(TaskOutcome.SUCCESS)
+      get { task(":pullImage") }.isNotNull().get { outcome }.isEqualTo(TaskOutcome.SUCCESS)
     }
 
-    expectThat(imageExists("alpine:3.18.9")).isTrue()
+    expectThat(imageExists("hello-world:latest")).isTrue()
   }
 
   @Test
@@ -95,4 +95,3 @@ class DockerPullTest : GradleProjectTest() {
     return exitCode == 0
   }
 }
-

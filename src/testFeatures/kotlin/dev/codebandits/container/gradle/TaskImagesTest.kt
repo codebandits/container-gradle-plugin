@@ -162,7 +162,7 @@ class TaskImagesTest : GradleProjectTest() {
       
       tasks {
         register("useImage") {
-          inputRegistryImage("alpine:latest")
+          inputRegistryImage("hello-world:latest")
           outputs.upToDateWhen { true }
           doLast { }
         }
@@ -205,7 +205,7 @@ class TaskImagesTest : GradleProjectTest() {
       
       tasks {
         register("useImage") {
-          inputRegistryImage("docker.io/library/alpine:latest")
+          inputRegistryImage("docker.io/library/hello-world:latest")
           outputs.upToDateWhen { true }
           doLast { }
         }
