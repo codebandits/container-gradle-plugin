@@ -20,7 +20,7 @@ class DockerHostPathTest : GradleProjectTest() {
     buildGradleKtsFile.appendLine(
       """
       tasks {
-        register<ContainerRunTask>("helloWorld") {
+        register<ContainerTask>("helloWorld") {
           dockerPull {
             image = "alpine:latest"
             dockerHost = "unix:///var/run/custom.sock"
@@ -64,7 +64,7 @@ class DockerHostPathTest : GradleProjectTest() {
     buildGradleKtsFile.appendLine(
       """
       tasks {
-        register<ContainerRunTask>("echo") {
+        register<ContainerTask>("echo") {
           dockerPull {
             image = "alpine:latest"
             dockerHost = "unix:///var/run/custom.sock"

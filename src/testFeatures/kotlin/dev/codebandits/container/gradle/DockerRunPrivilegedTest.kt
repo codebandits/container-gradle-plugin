@@ -14,14 +14,14 @@ class DockerRunPrivilegedTest : GradleProjectTest() {
   fun `dockerRun privileged is not set`() {
     buildGradleKtsFile.appendLine(
       """
-      import dev.codebandits.container.gradle.tasks.ContainerRunTask
+      import dev.codebandits.container.gradle.tasks.ContainerTask
       
       plugins {
         id("dev.codebandits.container")
       }
       
       tasks {
-        register<ContainerRunTask>("accessMemory") {
+        register<ContainerTask>("accessMemory") {
           dockerPull { image = "alpine:latest" }
           dockerRun {
             image = "alpine:latest"
@@ -46,14 +46,14 @@ class DockerRunPrivilegedTest : GradleProjectTest() {
   fun `dockerRun privileged is set`() {
     buildGradleKtsFile.appendLine(
       """
-      import dev.codebandits.container.gradle.tasks.ContainerRunTask
+      import dev.codebandits.container.gradle.tasks.ContainerTask
       
       plugins {
         id("dev.codebandits.container")
       }
       
       tasks {
-        register<ContainerRunTask>("accessMemory") {
+        register<ContainerTask>("accessMemory") {
           dockerPull { image = "alpine:latest" }
           dockerRun {
             image = "alpine:latest"

@@ -1,10 +1,10 @@
-import dev.codebandits.container.gradle.tasks.ContainerRunTask
+import dev.codebandits.container.gradle.tasks.ContainerTask
 
 plugins {
     id 'dev.codebandits.container'
 }
 
-tasks.register('sayHello', ContainerRunTask) {
+tasks.register('sayHello', ContainerTask) {
     dockerPull {
         it.image.set('alpine:latest')
     }
@@ -14,7 +14,7 @@ tasks.register('sayHello', ContainerRunTask) {
     }
 }
 
-tasks.register('writeHello', ContainerRunTask) {
+tasks.register('writeHello', ContainerTask) {
     dockerPull {
         it.image.set('alpine:latest')
     }

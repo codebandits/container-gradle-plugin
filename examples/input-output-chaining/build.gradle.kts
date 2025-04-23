@@ -1,4 +1,4 @@
-import dev.codebandits.container.gradle.tasks.ContainerRunTask
+import dev.codebandits.container.gradle.tasks.ContainerTask
 import dev.codebandits.container.gradle.tasks.inputImages
 import dev.codebandits.container.gradle.tasks.outputImages
 import org.gradle.kotlin.dsl.support.serviceOf
@@ -18,7 +18,7 @@ tasks {
     }
   }
 
-  register<ContainerRunTask>("buildImage") {
+  register<ContainerTask>("buildImage") {
     inputs.file("Dockerfile")
     outputImages.dockerLocal("my-image:latest")
     dockerPull {

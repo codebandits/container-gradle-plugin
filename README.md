@@ -24,10 +24,10 @@ plugins {
 Create tasks that use containers:
 
 ```kotlin
-import dev.codebandits.container.gradle.tasks.ContainerRunTask
+import dev.codebandits.container.gradle.tasks.ContainerTask
 
 tasks {
-  register<ContainerRunTask>("writeHello") {
+  register<ContainerTask>("writeHello") {
     dockerPull { image = "alpine:latest" }
     dockerRun {
       image = "alpine:latest"

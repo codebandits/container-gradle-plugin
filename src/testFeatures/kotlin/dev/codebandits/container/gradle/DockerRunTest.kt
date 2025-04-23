@@ -20,14 +20,14 @@ class DockerRunTest : GradleProjectTest() {
   fun `dockerRun uses the specified image`() {
     buildGradleKtsFile.appendLine(
       """
-      import dev.codebandits.container.gradle.tasks.ContainerRunTask
+      import dev.codebandits.container.gradle.tasks.ContainerTask
       
       plugins {
         id("dev.codebandits.container")
       }
       
       tasks {
-        register<ContainerRunTask>("reportAlpineVersion") {
+        register<ContainerTask>("reportAlpineVersion") {
           dockerPull { image = "alpine:3.18.9" }
           dockerRun {
             image = "alpine:3.18.9"
@@ -55,14 +55,14 @@ class DockerRunTest : GradleProjectTest() {
   fun `dockerRun reports successful task status`() {
     buildGradleKtsFile.appendLine(
       """
-      import dev.codebandits.container.gradle.tasks.ContainerRunTask
+      import dev.codebandits.container.gradle.tasks.ContainerTask
       
       plugins {
         id("dev.codebandits.container")
       }
       
       tasks {
-        register<ContainerRunTask>("beSuccessful") {
+        register<ContainerTask>("beSuccessful") {
           dockerPull { image = "alpine:latest" }
           dockerRun {
             image = "alpine:latest"
@@ -86,14 +86,14 @@ class DockerRunTest : GradleProjectTest() {
   fun `dockerRun reports failed task status`() {
     buildGradleKtsFile.appendLine(
       """
-      import dev.codebandits.container.gradle.tasks.ContainerRunTask
+      import dev.codebandits.container.gradle.tasks.ContainerTask
       
       plugins {
         id("dev.codebandits.container")
       }
       
       tasks {
-        register<ContainerRunTask>("alwaysFail") {
+        register<ContainerTask>("alwaysFail") {
           dockerPull { image = "alpine:latest" }
           dockerRun {
             image = "alpine:latest"
@@ -121,14 +121,14 @@ class DockerRunTest : GradleProjectTest() {
   fun `dockerRun streams stdout and stderr separately`() {
     buildGradleKtsFile.appendLine(
       """
-      import dev.codebandits.container.gradle.tasks.ContainerRunTask
+      import dev.codebandits.container.gradle.tasks.ContainerTask
       
       plugins {
         id("dev.codebandits.container")
       }
       
       tasks {
-        register<ContainerRunTask>("outputTest") {
+        register<ContainerTask>("outputTest") {
           dockerPull { image = "alpine:latest" }
           dockerRun {
             image = "alpine:latest"
@@ -169,14 +169,14 @@ class DockerRunTest : GradleProjectTest() {
   fun `dockerRun uses a provided workdir`() {
     buildGradleKtsFile.appendLine(
       """
-      import dev.codebandits.container.gradle.tasks.ContainerRunTask
+      import dev.codebandits.container.gradle.tasks.ContainerTask
       
       plugins {
         id("dev.codebandits.container")
       }
       
       tasks {
-        register<ContainerRunTask>("secretDecoder") {
+        register<ContainerTask>("secretDecoder") {
           dockerPull { image = "alpine:latest" }
           dockerRun {
             image = "alpine:latest"

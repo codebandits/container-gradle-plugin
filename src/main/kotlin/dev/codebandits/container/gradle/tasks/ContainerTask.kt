@@ -12,7 +12,7 @@ import org.gradle.api.GradleException
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
 
-public abstract class ContainerRunTask : ContainerExecTask() {
+public abstract class ContainerTask : ContainerExecTask() {
 
   public open class DockerPullSpec(objects: ObjectFactory) {
     public val image: Property<String> = objects.property(String::class.java)

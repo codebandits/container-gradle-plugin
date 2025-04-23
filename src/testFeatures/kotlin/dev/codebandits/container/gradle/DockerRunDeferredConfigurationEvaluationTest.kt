@@ -14,14 +14,14 @@ class DockerRunDeferredConfigurationEvaluationTest : GradleProjectTest() {
   fun `dockerRun configuration evaluation is deferred`() {
     buildGradleKtsFile.appendLine(
       """
-      import dev.codebandits.container.gradle.tasks.ContainerRunTask
+      import dev.codebandits.container.gradle.tasks.ContainerTask
       
       plugins {
         id("dev.codebandits.container")
       }
       
       tasks {
-        register<ContainerRunTask>("notReady") {
+        register<ContainerTask>("notReady") {
           val imageProvider = project.provider<String> { TODO() }
           dockerRun {
             image = imageProvider.get()

@@ -19,14 +19,14 @@ class DockerPullTest : GradleProjectTest() {
 
     buildGradleKtsFile.appendLine(
       """
-      import dev.codebandits.container.gradle.tasks.ContainerRunTask
+      import dev.codebandits.container.gradle.tasks.ContainerTask
       
       plugins {
         id("dev.codebandits.container")
       }
       
       tasks {
-        register<ContainerRunTask>("pullAlpineImage") {
+        register<ContainerTask>("pullAlpineImage") {
           dockerPull {
             image = "alpine:3.18.9"
           }
@@ -52,14 +52,14 @@ class DockerPullTest : GradleProjectTest() {
   fun `dockerPull fails when pulling an image that does not exist`() {
     buildGradleKtsFile.appendLine(
       """
-      import dev.codebandits.container.gradle.tasks.ContainerRunTask
+      import dev.codebandits.container.gradle.tasks.ContainerTask
       
       plugins {
         id("dev.codebandits.container")
       }
       
       tasks {
-        register<ContainerRunTask>("pullImageNotExist") {
+        register<ContainerTask>("pullImageNotExist") {
           dockerPull {
             image = "alpine:${UUID.randomUUID()}"
           }

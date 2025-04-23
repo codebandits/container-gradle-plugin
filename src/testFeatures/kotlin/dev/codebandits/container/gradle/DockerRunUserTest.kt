@@ -15,14 +15,14 @@ class DockerRunUserTest : GradleProjectTest() {
   fun `dockerRun user is set to guest`() {
     buildGradleKtsFile.appendLine(
       """
-      import dev.codebandits.container.gradle.tasks.ContainerRunTask
+      import dev.codebandits.container.gradle.tasks.ContainerTask
       
       plugins {
         id("dev.codebandits.container")
       }
       
       tasks {
-        register<ContainerRunTask>("whoami") {
+        register<ContainerTask>("whoami") {
           dockerPull { image = "alpine:latest" }
           dockerRun {
             image = "alpine:latest"
@@ -50,14 +50,14 @@ class DockerRunUserTest : GradleProjectTest() {
   fun `dockerRun user is set to root`() {
     buildGradleKtsFile.appendLine(
       """
-      import dev.codebandits.container.gradle.tasks.ContainerRunTask
+      import dev.codebandits.container.gradle.tasks.ContainerTask
       
       plugins {
         id("dev.codebandits.container")
       }
       
       tasks {
-        register<ContainerRunTask>("whoami") {
+        register<ContainerTask>("whoami") {
           dockerPull { image = "alpine:latest" }
           dockerRun {
             image = "alpine:latest"

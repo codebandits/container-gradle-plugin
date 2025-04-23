@@ -28,7 +28,7 @@ internal fun GradleProjectTest.setupPluginLibsDir() {
 internal fun Path.configureBuildGradlePluginFromLibsDir() {
   appendLine(
     """
-    import dev.codebandits.container.gradle.tasks.ContainerRunTask
+    import dev.codebandits.container.gradle.tasks.ContainerTask
     buildscript {
       dependencies {
         classpath(fileTree("libs") { include("*.jar") })
@@ -42,7 +42,7 @@ internal fun Path.configureBuildGradlePluginFromLibsDir() {
 internal fun Path.configureBuildGradleKtsPluginFromLibsDir() {
   appendLine(
     """
-    import dev.codebandits.container.gradle.tasks.ContainerRunTask
+    import dev.codebandits.container.gradle.tasks.ContainerTask
     buildscript {
       dependencies {
         classpath(fileTree("libs") { include("*.jar") })

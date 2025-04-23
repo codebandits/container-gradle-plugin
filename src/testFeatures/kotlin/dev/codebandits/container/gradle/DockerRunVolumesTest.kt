@@ -21,14 +21,14 @@ class DockerRunVolumesTest : GradleProjectTest() {
 
     buildGradleKtsFile.appendLine(
       """
-      import dev.codebandits.container.gradle.tasks.ContainerRunTask
+      import dev.codebandits.container.gradle.tasks.ContainerTask
       
       plugins {
         id("dev.codebandits.container")
       }
       
       tasks {
-        register<ContainerRunTask>("readInput") {
+        register<ContainerTask>("readInput") {
           dockerPull { image = "alpine:latest" }
           dockerRun {
             image = "alpine:latest"
@@ -62,14 +62,14 @@ class DockerRunVolumesTest : GradleProjectTest() {
 
     buildGradleKtsFile.appendLine(
       """
-      import dev.codebandits.container.gradle.tasks.ContainerRunTask
+      import dev.codebandits.container.gradle.tasks.ContainerTask
       
       plugins {
         id("dev.codebandits.container")
       }
       
       tasks {
-        register<ContainerRunTask>("readInput") {
+        register<ContainerTask>("readInput") {
           dockerPull { image = "alpine:latest" }
           dockerRun {
             image = "alpine:latest"
@@ -107,14 +107,14 @@ class DockerRunVolumesTest : GradleProjectTest() {
 
     buildGradleKtsFile.appendLine(
       """
-      import dev.codebandits.container.gradle.tasks.ContainerRunTask
+      import dev.codebandits.container.gradle.tasks.ContainerTask
       
       plugins {
         id("dev.codebandits.container")
       }
       
       tasks {
-        register<ContainerRunTask>("inspectInputs") {
+        register<ContainerTask>("inspectInputs") {
           dockerPull { image = "alpine:latest" }
           dockerRun {
             image = "alpine:latest"

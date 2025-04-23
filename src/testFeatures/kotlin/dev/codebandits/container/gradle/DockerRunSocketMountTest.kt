@@ -15,14 +15,14 @@ class DockerRunSocketMountTest : GradleProjectTest() {
   fun `dockerRun volumes can be used to mount the docker socket`() {
     buildGradleKtsFile.appendLine(
       """
-      import dev.codebandits.container.gradle.tasks.ContainerRunTask
+      import dev.codebandits.container.gradle.tasks.ContainerTask
       
       plugins {
         id("dev.codebandits.container")
       }
       
       tasks {
-        register<ContainerRunTask>("dockerVersion") {
+        register<ContainerTask>("dockerVersion") {
           dockerPull { image = "curlimages/curl:latest" }
           dockerRun {
             image = "curlimages/curl:latest"

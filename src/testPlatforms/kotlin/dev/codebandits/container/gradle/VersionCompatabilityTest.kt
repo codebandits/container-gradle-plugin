@@ -24,7 +24,7 @@ class VersionCompatabilityTest : GradleProjectTest() {
     buildGradleFile.configureBuildGradlePluginFromLibsDir()
     buildGradleFile.appendLine(
       """
-      tasks.register('helloWorld', ContainerRunTask) {
+      tasks.register('helloWorld', ContainerTask) {
         dockerPull {
           it.image.set('alpine:latest')
         }

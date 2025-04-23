@@ -88,7 +88,7 @@ class TaskImagesTest : GradleProjectTest() {
 
     buildGradleKtsFile.appendLine(
       """
-      import dev.codebandits.container.gradle.tasks.ContainerRunTask
+      import dev.codebandits.container.gradle.tasks.ContainerTask
       import dev.codebandits.container.gradle.tasks.outputImages
       
       plugins {
@@ -96,7 +96,7 @@ class TaskImagesTest : GradleProjectTest() {
       }
       
       tasks {
-        register<ContainerRunTask>("buildImage") {
+        register<ContainerTask>("buildImage") {
           outputImages.dockerLocal("$imageReference")
           dockerPull { image = "docker:dind" }
           dockerRun {

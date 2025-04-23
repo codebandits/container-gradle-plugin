@@ -19,14 +19,14 @@ class DockerRemoveTest : GradleProjectTest() {
 
     buildGradleKtsFile.appendLine(
       """
-      import dev.codebandits.container.gradle.tasks.ContainerRunTask
+      import dev.codebandits.container.gradle.tasks.ContainerTask
       
       plugins {
         id("dev.codebandits.container")
       }
       
       tasks {
-        register<ContainerRunTask>("removeAlpineImage") {
+        register<ContainerTask>("removeAlpineImage") {
           dockerRemove {
             image = "alpine:3.18.9"
           }
@@ -52,14 +52,14 @@ class DockerRemoveTest : GradleProjectTest() {
   fun `dockerRemove fails when removing an image that does not exist`() {
     buildGradleKtsFile.appendLine(
       """
-      import dev.codebandits.container.gradle.tasks.ContainerRunTask
+      import dev.codebandits.container.gradle.tasks.ContainerTask
       
       plugins {
         id("dev.codebandits.container")
       }
       
       tasks {
-        register<ContainerRunTask>("removeImageNotExist") {
+        register<ContainerTask>("removeImageNotExist") {
           dockerRemove {
             image = "alpine:${UUID.randomUUID()}"
           }

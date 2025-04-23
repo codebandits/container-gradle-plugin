@@ -18,14 +18,14 @@ class DockerRunWorkdirTest : GradleProjectTest() {
   fun `dockerRun workdir is set to an existing directory`() {
     buildGradleKtsFile.appendLine(
       """
-      import dev.codebandits.container.gradle.tasks.ContainerRunTask
+      import dev.codebandits.container.gradle.tasks.ContainerTask
       
       plugins {
         id("dev.codebandits.container")
       }
       
       tasks {
-        register<ContainerRunTask>("listMedia") {
+        register<ContainerTask>("listMedia") {
           dockerPull { image = "alpine:latest" }
           dockerRun {
             image = "alpine:latest"
@@ -59,14 +59,14 @@ class DockerRunWorkdirTest : GradleProjectTest() {
   fun `dockerRun workdir is set to a non-existent directory`() {
     buildGradleKtsFile.appendLine(
       """
-      import dev.codebandits.container.gradle.tasks.ContainerRunTask
+      import dev.codebandits.container.gradle.tasks.ContainerTask
       
       plugins {
         id("dev.codebandits.container")
       }
       
       tasks {
-        register<ContainerRunTask>("listMedia") {
+        register<ContainerTask>("listMedia") {
           dockerPull { image = "alpine:latest" }
           dockerRun {
             image = "alpine:latest"
@@ -97,14 +97,14 @@ class DockerRunWorkdirTest : GradleProjectTest() {
 
     buildGradleKtsFile.appendLine(
       """
-      import dev.codebandits.container.gradle.tasks.ContainerRunTask
+      import dev.codebandits.container.gradle.tasks.ContainerTask
       
       plugins {
         id("dev.codebandits.container")
       }
       
       tasks {
-        register<ContainerRunTask>("listMedia") {
+        register<ContainerTask>("listMedia") {
           dockerPull { image = "alpine:latest" }
           dockerRun {
             image = "alpine:latest"

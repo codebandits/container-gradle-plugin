@@ -1,4 +1,4 @@
-import dev.codebandits.container.gradle.tasks.ContainerRunTask
+import dev.codebandits.container.gradle.tasks.ContainerTask
 import dev.codebandits.container.gradle.tasks.outputImages
 
 plugins {
@@ -6,7 +6,7 @@ plugins {
 }
 
 tasks {
-  register<ContainerRunTask>("buildImage") {
+  register<ContainerTask>("buildImage") {
     inputs.file("Dockerfile")
     outputImages.dockerLocal("my-image:latest")
     dockerPull {
