@@ -1,7 +1,5 @@
-package dev.codebandits.container.gradle.docker
+package dev.codebandits.container.gradle.image
 
-import dev.codebandits.container.gradle.tasks.ImageReferenceParts
-import dev.codebandits.container.gradle.tasks.toImageReferenceParts
 import org.gradle.api.GradleException
 import java.net.URI
 import java.net.http.HttpClient
@@ -11,7 +9,7 @@ import java.net.http.HttpResponse
 internal object Registry {
   private val httpClient = HttpClient.newBuilder().build()
 
-  internal fun getDigest(imageReference: String): String? {
+  internal fun getImageDigest(imageReference: String): String? {
     val imageReferenceParts = imageReference.toImageReferenceParts()
     val httpResponse = run {
       val httpRequest = buildRegistryManifestRequest(imageReferenceParts)

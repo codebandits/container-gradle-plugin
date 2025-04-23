@@ -37,7 +37,7 @@ class BuildpacksIntegrationTest : GradleProjectTest() {
     buildGradleKtsFile.appendLine(
       """
       import dev.codebandits.container.gradle.tasks.ContainerTask
-      import dev.codebandits.container.gradle.tasks.outputLocalImage
+      import dev.codebandits.container.gradle.image.outputLocalImage
       
       plugins {
         id("dev.codebandits.container")

@@ -1,4 +1,4 @@
-package dev.codebandits.container.gradle.tasks
+package dev.codebandits.container.gradle.image
 
 internal data class ImageReferenceParts(
   val registry: String,

@@ -1,6 +1,6 @@
+import dev.codebandits.container.gradle.image.inputLocalImage
+import dev.codebandits.container.gradle.image.outputLocalImage
 import dev.codebandits.container.gradle.tasks.ContainerTask
-import dev.codebandits.container.gradle.tasks.inputLocalImage
-import dev.codebandits.container.gradle.tasks.outputLocalImage
 import org.gradle.kotlin.dsl.support.serviceOf
 
 plugins {

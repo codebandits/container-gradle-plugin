@@ -22,7 +22,7 @@ class TaskImagesTest : GradleProjectTest() {
 
     buildGradleKtsFile.appendLine(
       """
-      import dev.codebandits.container.gradle.tasks.inputLocalImage
+      import dev.codebandits.container.gradle.image.inputLocalImage
       
       plugins {
         id("dev.codebandits.container")
@@ -89,7 +89,7 @@ class TaskImagesTest : GradleProjectTest() {
     buildGradleKtsFile.appendLine(
       """
       import dev.codebandits.container.gradle.tasks.ContainerTask
-      import dev.codebandits.container.gradle.tasks.outputLocalImage
+      import dev.codebandits.container.gradle.image.outputLocalImage
       
       plugins {
         id("dev.codebandits.container")
@@ -154,7 +154,7 @@ class TaskImagesTest : GradleProjectTest() {
   fun `inputRegistryImage checks remote image state for up-to-date determination`() {
     buildGradleKtsFile.appendLine(
       """
-      import dev.codebandits.container.gradle.tasks.inputRegistryImage
+      import dev.codebandits.container.gradle.image.inputRegistryImage
       
       plugins {
         id("dev.codebandits.container")
@@ -197,7 +197,7 @@ class TaskImagesTest : GradleProjectTest() {
   fun `inputRegistryImage can check fully qualified Docker Hub images`() {
     buildGradleKtsFile.appendLine(
       """
-      import dev.codebandits.container.gradle.tasks.inputRegistryImage
+      import dev.codebandits.container.gradle.image.inputRegistryImage
       
       plugins {
         id("dev.codebandits.container")
@@ -227,7 +227,7 @@ class TaskImagesTest : GradleProjectTest() {
   fun `inputRegistryImage can check fully qualified Quay images`() {
     buildGradleKtsFile.appendLine(
       """
-      import dev.codebandits.container.gradle.tasks.inputRegistryImage
+      import dev.codebandits.container.gradle.image.inputRegistryImage
       
       plugins {
         id("dev.codebandits.container")
@@ -257,7 +257,7 @@ class TaskImagesTest : GradleProjectTest() {
   fun `inputRegistryImage can check fully qualified GHCR images`() {
     buildGradleKtsFile.appendLine(
       """
-      import dev.codebandits.container.gradle.tasks.inputRegistryImage
+      import dev.codebandits.container.gradle.image.inputRegistryImage
       
       plugins {
         id("dev.codebandits.container")

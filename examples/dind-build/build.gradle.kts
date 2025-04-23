@@ -1,5 +1,5 @@
+import dev.codebandits.container.gradle.image.outputLocalImage
 import dev.codebandits.container.gradle.tasks.ContainerTask
-import dev.codebandits.container.gradle.tasks.outputLocalImage
 
 plugins {
   id("dev.codebandits.container")

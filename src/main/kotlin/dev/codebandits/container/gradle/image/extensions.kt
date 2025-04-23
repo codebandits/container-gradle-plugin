@@ -1,6 +1,10 @@
-package dev.codebandits.container.gradle.tasks
+package dev.codebandits.container.gradle.image
 
 import org.gradle.api.Task
+import org.gradle.api.file.RegularFile
+import org.gradle.api.provider.Provider
+import java.net.URLEncoder
+import java.nio.charset.StandardCharsets
 
 public fun Task.inputLocalImage(
   imageReference: String,
@@ -53,4 +57,36 @@ public fun Task.outputRegistryImage(
       writeRegistryImageDigest(imageReference, regularFile)
     }
   }
+}
+
+private fun Task.getLocalImageTrackingFile(
+  imageReference: String,
+): Provider<RegularFile> {
+  val fileName = URLEncoder.encode(imageReference, StandardCharsets.UTF_8)
+  return project.layout.buildDirectory.file("images/local/$fileName")
+}
+
+private fun Task.getRegistryImageTrackingFile(
+  imageReference: String,
+): Provider<RegularFile> {
+  val fileName = URLEncoder.encode(imageReference, StandardCharsets.UTF_8)
+  return project.layout.buildDirectory.file("images/registry/$fileName")
+}
+
+private fun writeLocalImageId(imageReference: String, regularFile: RegularFile) {
+  val file = regularFile.asFile
+  if (!file.parentFile.exists()) {
+    file.parentFile.mkdirs()
+  }
+  val imageId = Local.getImageId(imageReference)
+  file.writeText(imageId ?: "")
+}
+
+private fun writeRegistryImageDigest(imageReference: String, regularFile: RegularFile) {
+  val file = regularFile.asFile
+  if (!file.parentFile.exists()) {
+    file.parentFile.mkdirs()
+  }
+  val imageDigest = Registry.getImageDigest(imageReference)
+  file.writeText(imageDigest ?: "")
 }

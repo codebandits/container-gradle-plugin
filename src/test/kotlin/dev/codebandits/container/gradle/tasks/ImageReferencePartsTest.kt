@@ -1,5 +1,6 @@
 package dev.codebandits.container.gradle.tasks
 
+import dev.codebandits.container.gradle.image.toImageReferenceParts
 import org.junit.jupiter.api.Test
 import strikt.api.expectThat
 import strikt.assertions.isEqualTo
