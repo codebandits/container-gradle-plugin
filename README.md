@@ -1,10 +1,13 @@
 # Container Gradle Plugin
 
-Container is a Gradle plugin that enhances build portability, reproducibility, and flexibility by integrating containers into Gradle tasks. It provides a declarative and familiar way to run task operations inside containers and declare containers as task inputs and outputs.
+Container is a Gradle plugin that enhances build portability, reproducibility, and flexibility by integrating containers
+into Gradle tasks. It provides a declarative and familiar way to run task operations inside containers and declare
+containers as task inputs and outputs.
 
 ## Status
 
-⚠️ **Experimental**: This project is currently in its early stages (version `0.x.x`). The API and features may change as we refine and improve the plugin. We're actively seeking feedback from early adopters to help shape its development.
+⚠️ **Experimental**: This project is currently in its early stages (version `0.x.x`). The API and features may change as
+we refine and improve the plugin. We're actively seeking feedback from early adopters to help shape its development.
 
 ## Features
 
@@ -39,6 +42,60 @@ tasks {
       volumes = arrayOf(
         "${layout.projectDirectory}:/workdir",
       )
+    }
+  }
+}
+```
+
+Create tasks that produce images:
+
+```kotlin
+import dev.codebandits.container.gradle.container
+import dev.codebandits.container.gradle.tasks.ContainerTask
+
+tasks {
+  register<ContainerTask>("buildWithDocker") {
+    inputs.file("Dockerfile")
+    container.outputs.localImage("docker-build-image:latest")
+    dockerPull {
+      image = "docker:dind"
+    }
+    dockerRun {
+      image = "docker:dind"
+      entrypoint = "docker"
+      args = arrayOf("build", "-t", "docker-build-image:latest", ".")
+      workdir = "/workdir"
+      volumes = arrayOf(
+        "${layout.projectDirectory}:/workdir",
+        "/var/run/docker.sock:/var/run/docker.sock:ro",
+      )
+    }
+    doLast {
+      container.outputs.captureLocalImage("docker-build-image:latest")
+    }
+  }
+
+  register<ContainerTask>("buildImageWithPack") {
+    inputs.file("index.html")
+    inputs.file("project.toml")
+    container.outputs.localImage("pack-build-image:latest")
+    dockerPull {
+      image = "buildpacksio/pack:latest"
+    }
+    dockerRun {
+      image = "buildpacksio/pack:latest"
+      args = arrayOf(
+        "build", "pack-build-image:latest",
+        "--builder", "paketobuildpacks/builder-jammy-base:latest",
+      )
+      workdir = "/workdir"
+      volumes = arrayOf(
+        "${layout.projectDirectory}:/workdir",
+        "/var/run/docker.sock:/var/run/docker.sock:ro",
+      )
+    }
+    doLast {
+      container.outputs.captureLocalImage("pack-build-image:latest")
     }
   }
 }
