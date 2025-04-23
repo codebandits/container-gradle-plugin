@@ -26,14 +26,13 @@ class GroovySyntaxTest : GradleProjectTest() {
     buildGradleFile.appendLine(
       """
       import dev.codebandits.container.gradle.tasks.ContainerTask
-      import dev.codebandits.container.gradle.image.outputLocalImage
       
       plugins {
         id("dev.codebandits.container")
       }
       
       tasks.register("buildImage", ContainerTask) {
-        outputLocalImage("$imageReference")
+        container.outputLocalImage("$imageReference")
         dockerPull { it.image.set("docker:dind") }
         dockerRun {
           it.image.set("docker:dind")

@@ -6,6 +6,24 @@ import org.gradle.api.provider.Provider
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
 
+public abstract class ContainerTaskExtension(private val task: Task) {
+  public fun inputLocalImage(imageReference: String) {
+    task.inputLocalImage(imageReference)
+  }
+
+  public fun outputLocalImage(imageReference: String) {
+    task.outputLocalImage(imageReference)
+  }
+
+  public fun inputRegistryImage(imageReference: String, autoRefresh: Boolean = false) {
+    task.inputRegistryImage(imageReference, autoRefresh)
+  }
+
+  public fun outputRegistryImage(imageReference: String, autoRefresh: Boolean = false) {
+    task.outputRegistryImage(imageReference, autoRefresh)
+  }
+}
+
 public fun Task.inputLocalImage(
   imageReference: String,
 ) {
