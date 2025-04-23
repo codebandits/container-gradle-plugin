@@ -9,9 +9,3 @@ public class ExecutionStep(
   public val resultHandler: ((ExecResult) -> Unit)? = null,
   public val shouldRun: () -> Boolean = { true },
 )
-
-internal fun Task.run(step: ExecutionStep) {
-  if (step.shouldRun()) {
-    apply(step.action::execute)
-  }
-}

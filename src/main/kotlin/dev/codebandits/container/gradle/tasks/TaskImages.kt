@@ -55,7 +55,7 @@ public abstract class TaskImages(private val task: Task) {
 
     return ImageIdentifierFileConfig(
       fileProvider = imageIdentifierFileProvider.map { regularFile ->
-        task.run(updateStep)
+        task.apply(updateStep.action::execute)
         regularFile
       },
       updateStep = updateStep,
@@ -117,7 +117,7 @@ public abstract class TaskImages(private val task: Task) {
 
     return ImageIdentifierFileConfig(
       fileProvider = imageIdentifierFileProvider.map { regularFile ->
-        task.run(updateStep)
+        task.apply(updateStep.action::execute)
         regularFile
       },
       updateStep = updateStep,
@@ -147,7 +147,7 @@ public abstract class TaskImages(private val task: Task) {
         imageReference = imageReference,
       )
       task.outputs.file(config.fileProvider)
-      task.doLast { task -> task.run(config.updateStep) }
+      task.doLast { task -> task.apply(config.updateStep.action::execute) }
     }
 
     public fun dockerRegistry(imageReference: String, autoRefresh: Boolean = false) {
@@ -156,7 +156,7 @@ public abstract class TaskImages(private val task: Task) {
         autoRefresh = autoRefresh,
       )
       task.outputs.file(config.fileProvider)
-      task.doLast { task -> task.run(config.updateStep) }
+      task.doLast { task -> task.apply(config.updateStep.action::execute) }
     }
   }
 }

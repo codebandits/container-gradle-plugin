@@ -8,11 +8,26 @@ import com.github.dockerjava.api.model.Frame
 import com.github.dockerjava.api.model.HostConfig
 import com.github.dockerjava.api.model.StreamType
 import dev.codebandits.container.gradle.docker.createDockerClient
+import org.gradle.api.DefaultTask
 import org.gradle.api.GradleException
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
+import org.gradle.api.tasks.Internal
+import org.gradle.api.tasks.TaskAction
 
-public abstract class ContainerTask : ContainerExecTask() {
+public abstract class ContainerTask : DefaultTask() {
+
+  @Internal
+  protected val steps: MutableList<ExecutionStep> = mutableListOf()
+
+  @TaskAction
+  public fun run() {
+    steps.forEach { step ->
+      if (step.shouldRun()) {
+        apply(step.action::execute)
+      }
+    }
+  }
 
   public open class DockerPullSpec(objects: ObjectFactory) {
     public val image: Property<String> = objects.property(String::class.java)
