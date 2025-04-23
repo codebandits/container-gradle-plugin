@@ -89,7 +89,10 @@ private fun writeLocalImageId(imageReference: String, trackingFile: RegularFile)
     file.parentFile.mkdirs()
   }
   val imageId = Local.getImageId(imageReference)
-  file.writeText(imageId ?: "")
+  when (imageId) {
+    null -> file.delete()
+    else -> file.writeText(imageId)
+  }
 }
 
 private fun writeRegistryImageDigest(imageReference: String, trackingFile: RegularFile) {
@@ -98,5 +101,8 @@ private fun writeRegistryImageDigest(imageReference: String, trackingFile: Regul
     file.parentFile.mkdirs()
   }
   val imageDigest = Registry.getImageDigest(imageReference)
-  file.writeText(imageDigest ?: "")
+  when (imageDigest) {
+    null -> file.delete()
+    else -> file.writeText(imageDigest)
+  }
 }
