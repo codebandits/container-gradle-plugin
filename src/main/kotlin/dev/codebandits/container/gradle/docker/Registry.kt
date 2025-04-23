@@ -15,7 +15,7 @@ internal object Registry {
     val imageReferenceParts = imageReference.toImageReferenceParts()
     val httpResponse = run {
       val httpRequest = buildRegistryManifestRequest(imageReferenceParts)
-      httpClient.send(httpRequest, HttpResponse.BodyHandlers.ofString())
+      httpClient.send(httpRequest, HttpResponse.BodyHandlers.discarding())
     }
 
     return when (httpResponse.statusCode()) {
@@ -46,11 +46,13 @@ internal object Registry {
 
     return HttpRequest.newBuilder()
       .uri(manifestUri)
-      .header("Accept", listOf(
-        "application/vnd.oci.image.index.v1+json",
-        "application/vnd.docker.distribution.manifest.v2+json",
-        "application/vnd.docker.distribution.manifest.list.v2+json",
-      ).joinToString(", "))
+      .header(
+        "Accept", listOf(
+          "application/vnd.oci.image.index.v1+json",
+          "application/vnd.docker.distribution.manifest.v2+json",
+          "application/vnd.docker.distribution.manifest.list.v2+json",
+        ).joinToString(", ")
+      )
       .header("Authorization", "Bearer $registryToken")
       .GET()
       .build()
