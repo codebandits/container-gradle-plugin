@@ -11,10 +11,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### Chore
+### Added
 
-- Improve image input/output API.
-- Groovy syntax accesses image input/output features on container extension. 
+- Introduce container task extension with inputs and outputs.
 
 ## [0.2.1] - 2025-04-23
 

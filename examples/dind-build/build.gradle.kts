@@ -8,7 +8,7 @@ plugins {
 tasks {
   register<ContainerTask>("buildImage") {
     inputs.file("Dockerfile")
-    container.outputLocalImage("my-image:latest")
+    container.outputs.localImage("my-image:latest")
     dockerPull {
       image = "docker:dind"
     }

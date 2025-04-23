@@ -45,7 +45,7 @@ class BuildpacksIntegrationTest : GradleProjectTest() {
       
       tasks {
         register<ContainerTask>("buildImage") {
-          container.outputLocalImage("$imageReference")
+          container.outputs.localImage("$imageReference")
           dockerPull {
             image = "buildpacksio/pack:latest"
           }

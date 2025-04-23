@@ -30,7 +30,7 @@ class TaskImagesTest : GradleProjectTest() {
       
       tasks {
         register("useImage") {
-          container.inputLocalImage("$imageReference")
+          container.inputs.localImage("$imageReference")
           outputs.upToDateWhen { true }
           doLast { }
         }
@@ -97,7 +97,7 @@ class TaskImagesTest : GradleProjectTest() {
       
       tasks {
         register<ContainerTask>("buildImage") {
-          container.outputLocalImage("$imageReference")
+          container.outputs.localImage("$imageReference")
           dockerPull { image = "docker:dind" }
           dockerRun {
             image = "docker:dind"
@@ -162,7 +162,7 @@ class TaskImagesTest : GradleProjectTest() {
       
       tasks {
         register("useImage") {
-          container.inputRegistryImage("hello-world:latest")
+          container.inputs.registryImage("hello-world:latest")
           outputs.upToDateWhen { true }
           doLast { }
         }
@@ -205,7 +205,7 @@ class TaskImagesTest : GradleProjectTest() {
       
       tasks {
         register("useImage") {
-          container.inputRegistryImage("docker.io/library/hello-world:latest")
+          container.inputs.registryImage("docker.io/library/hello-world:latest")
           outputs.upToDateWhen { true }
           doLast { }
         }
@@ -235,7 +235,7 @@ class TaskImagesTest : GradleProjectTest() {
       
       tasks {
         register("useImage") {
-          container.inputRegistryImage("quay.io/argoproj/argocd:latest")
+          container.inputs.registryImage("quay.io/argoproj/argocd:latest")
           outputs.upToDateWhen { true }
           doLast { }
         }
@@ -265,7 +265,7 @@ class TaskImagesTest : GradleProjectTest() {
       
       tasks {
         register("useImage") {
-          container.inputRegistryImage("ghcr.io/linuxserver/kasm:latest")
+          container.inputs.registryImage("ghcr.io/linuxserver/kasm:latest")
           outputs.upToDateWhen { true }
           doLast { }
         }

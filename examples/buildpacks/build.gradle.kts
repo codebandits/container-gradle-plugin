@@ -9,7 +9,7 @@ tasks {
   register<ContainerTask>("buildImage") {
     inputs.file("index.html")
     inputs.file("project.toml")
-    container.outputLocalImage("my-image:latest")
+    container.outputs.localImage("my-image:latest")
     dockerPull {
       image = "buildpacksio/pack:latest"
     }

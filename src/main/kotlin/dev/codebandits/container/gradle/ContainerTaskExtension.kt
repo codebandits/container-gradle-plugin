@@ -8,79 +8,86 @@ import org.gradle.api.provider.Provider
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
 
-public abstract class ContainerTaskExtension(private val task: Task) {
-  public fun inputLocalImage(imageReference: String) {
-    val trackingFile = task.getLocalImageTrackingFile(imageReference)
-    task.inputs.file(trackingFile.map { regularFile ->
-      writeLocalImageId(imageReference, regularFile)
-      regularFile
-    })
-  }
+public abstract class ContainerTaskExtension(task: Task) {
+  public val inputs: Inputs = Inputs(task)
+  public val outputs: Outputs = Outputs(task)
 
-  public fun outputLocalImage(imageReference: String) {
-    val trackingFile = task.getLocalImageTrackingFile(imageReference)
-    task.outputs.file(trackingFile.map { regularFile ->
-      writeLocalImageId(imageReference, regularFile)
-      regularFile
-    })
-    task.doLast { writeLocalImageId(imageReference, trackingFile.get()) }
-  }
+  public class Inputs internal constructor(private val task: Task) {
+    public fun localImage(imageReference: String) {
+      val trackingFile = task.getLocalImageTrackingFile(imageReference)
+      task.inputs.file(trackingFile.map { regularFile ->
+        writeLocalImageId(imageReference, regularFile)
+        regularFile
+      })
+    }
 
-  public fun inputRegistryImage(imageReference: String, autoRefresh: Boolean = false) {
-    val trackingFile = task.getRegistryImageTrackingFile(imageReference)
-    task.inputs.file(trackingFile.map { regularFile ->
-      if (autoRefresh || !regularFile.asFile.exists()) {
-        writeRegistryImageDigest(imageReference, regularFile)
-      }
-      regularFile
-    })
-  }
-
-  public fun outputRegistryImage(imageReference: String, autoRefresh: Boolean = false) {
-    val trackingFile = task.getLocalImageTrackingFile(imageReference)
-    task.outputs.file(trackingFile.map { regularFile ->
-      if (autoRefresh || !regularFile.asFile.exists()) {
-        writeRegistryImageDigest(imageReference, regularFile)
-      }
-      regularFile
-    })
-    task.doLast {
-      val regularFile = trackingFile.get()
-      if (autoRefresh || !regularFile.asFile.exists()) {
-        writeRegistryImageDigest(imageReference, regularFile)
-      }
+    public fun registryImage(imageReference: String, autoRefresh: Boolean = false) {
+      val trackingFile = task.getRegistryImageTrackingFile(imageReference)
+      task.inputs.file(trackingFile.map { regularFile ->
+        if (autoRefresh || !regularFile.asFile.exists()) {
+          writeRegistryImageDigest(imageReference, regularFile)
+        }
+        regularFile
+      })
     }
   }
 
-  private fun Task.getLocalImageTrackingFile(
-    imageReference: String,
-  ): Provider<RegularFile> {
-    val fileName = URLEncoder.encode(imageReference, StandardCharsets.UTF_8)
-    return project.layout.buildDirectory.file("images/local/$fileName")
-  }
-
-  private fun Task.getRegistryImageTrackingFile(
-    imageReference: String,
-  ): Provider<RegularFile> {
-    val fileName = URLEncoder.encode(imageReference, StandardCharsets.UTF_8)
-    return project.layout.buildDirectory.file("images/registry/$fileName")
-  }
-
-  private fun writeLocalImageId(imageReference: String, regularFile: RegularFile) {
-    val file = regularFile.asFile
-    if (!file.parentFile.exists()) {
-      file.parentFile.mkdirs()
+  public class Outputs internal constructor(private val task: Task) {
+    public fun localImage(imageReference: String) {
+      val trackingFile = task.getLocalImageTrackingFile(imageReference)
+      task.outputs.file(trackingFile.map { regularFile ->
+        writeLocalImageId(imageReference, regularFile)
+        regularFile
+      })
+      task.doLast { writeLocalImageId(imageReference, trackingFile.get()) }
     }
-    val imageId = Local.getImageId(imageReference)
-    file.writeText(imageId ?: "")
-  }
 
-  private fun writeRegistryImageDigest(imageReference: String, regularFile: RegularFile) {
-    val file = regularFile.asFile
-    if (!file.parentFile.exists()) {
-      file.parentFile.mkdirs()
+    public fun registryImage(imageReference: String, autoRefresh: Boolean = false) {
+      val trackingFile = task.getLocalImageTrackingFile(imageReference)
+      task.outputs.file(trackingFile.map { regularFile ->
+        if (autoRefresh || !regularFile.asFile.exists()) {
+          writeRegistryImageDigest(imageReference, regularFile)
+        }
+        regularFile
+      })
+      task.doLast {
+        val regularFile = trackingFile.get()
+        if (autoRefresh || !regularFile.asFile.exists()) {
+          writeRegistryImageDigest(imageReference, regularFile)
+        }
+      }
     }
-    val imageDigest = Registry.getImageDigest(imageReference)
-    file.writeText(imageDigest ?: "")
   }
+}
+
+private fun Task.getLocalImageTrackingFile(
+  imageReference: String,
+): Provider<RegularFile> {
+  val fileName = URLEncoder.encode(imageReference, StandardCharsets.UTF_8)
+  return project.layout.buildDirectory.file("images/local/$fileName")
+}
+
+private fun Task.getRegistryImageTrackingFile(
+  imageReference: String,
+): Provider<RegularFile> {
+  val fileName = URLEncoder.encode(imageReference, StandardCharsets.UTF_8)
+  return project.layout.buildDirectory.file("images/registry/$fileName")
+}
+
+private fun writeLocalImageId(imageReference: String, regularFile: RegularFile) {
+  val file = regularFile.asFile
+  if (!file.parentFile.exists()) {
+    file.parentFile.mkdirs()
+  }
+  val imageId = Local.getImageId(imageReference)
+  file.writeText(imageId ?: "")
+}
+
+private fun writeRegistryImageDigest(imageReference: String, regularFile: RegularFile) {
+  val file = regularFile.asFile
+  if (!file.parentFile.exists()) {
+    file.parentFile.mkdirs()
+  }
+  val imageDigest = Registry.getImageDigest(imageReference)
+  file.writeText(imageDigest ?: "")
 }

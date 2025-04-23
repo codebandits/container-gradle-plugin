@@ -9,7 +9,7 @@ plugins {
 tasks {
   register("printImageID") {
     dependsOn("buildImage")
-    container.inputLocalImage("my-image:latest")
+    container.inputs.localImage("my-image:latest")
     doLast {
       serviceOf<ExecOperations>().exec {
         commandLine("sh", "-c", "docker images --filter reference=my-image:latest --format {{.ID}}")
@@ -19,7 +19,7 @@ tasks {
 
   register<ContainerTask>("buildImage") {
     inputs.file("Dockerfile")
-    container.outputLocalImage("my-image:latest")
+    container.outputs.localImage("my-image:latest")
     dockerPull {
       image = "docker:dind"
     }
