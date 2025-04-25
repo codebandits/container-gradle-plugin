@@ -6,25 +6,25 @@ plugins {
 
 tasks {
   register<ContainerTask>("sayHello") {
-    dockerPull {
+    pullImage {
       image = "alpine:latest"
     }
-    dockerRun {
+    runContainer {
       image = "alpine:latest"
-      args = arrayOf("echo", "Hello from a container!")
+      cmd = listOf("echo", "Hello from a container!")
     }
   }
 
   register<ContainerTask>("writeHello") {
-    dockerPull {
+    pullImage {
       image = "alpine:latest"
     }
-    dockerRun {
+    runContainer {
       image = "alpine:latest"
       entrypoint = "sh"
-      args = arrayOf("-c", "echo Hello from a container! > message.txt")
+      cmd = listOf("-c", "echo Hello from a container! > message.txt")
       workdir = "/workdir"
-      volumes = arrayOf(
+      volumes = listOf(
         "${layout.projectDirectory}:/workdir",
       )
     }

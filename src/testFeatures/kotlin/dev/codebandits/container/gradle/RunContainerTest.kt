@@ -14,10 +14,10 @@ import java.io.StringWriter
 import kotlin.io.path.exists
 import kotlin.io.path.readText
 
-class DockerRunTest : GradleProjectTest() {
+class RunContainerTest : GradleProjectTest() {
 
   @Test
-  fun `dockerRun uses the specified image`() {
+  fun `runContainer uses the specified image`() {
     buildGradleKtsFile.appendLine(
       """
       import dev.codebandits.container.gradle.tasks.ContainerTask
@@ -28,11 +28,11 @@ class DockerRunTest : GradleProjectTest() {
       
       tasks {
         register<ContainerTask>("reportAlpineVersion") {
-          dockerPull { image = "alpine:3.18.9" }
-          dockerRun {
+          pullImage { image = "alpine:3.18.9" }
+          runContainer {
             image = "alpine:3.18.9"
             entrypoint = "sh"
-            args = arrayOf(
+            cmd = listOf(
               "-c",
               "printf 'ALPINE VERSION: ' && cat /etc/alpine-release",
             )
@@ -52,7 +52,7 @@ class DockerRunTest : GradleProjectTest() {
   }
 
   @Test
-  fun `dockerRun reports successful task status`() {
+  fun `runContainer reports successful task status`() {
     buildGradleKtsFile.appendLine(
       """
       import dev.codebandits.container.gradle.tasks.ContainerTask
@@ -63,8 +63,8 @@ class DockerRunTest : GradleProjectTest() {
       
       tasks {
         register<ContainerTask>("beSuccessful") {
-          dockerPull { image = "alpine:latest" }
-          dockerRun {
+          pullImage { image = "alpine:latest" }
+          runContainer {
             image = "alpine:latest"
             entrypoint = "echo"
           }
@@ -83,7 +83,7 @@ class DockerRunTest : GradleProjectTest() {
   }
 
   @Test
-  fun `dockerRun reports failed task status`() {
+  fun `runContainer reports failed task status`() {
     buildGradleKtsFile.appendLine(
       """
       import dev.codebandits.container.gradle.tasks.ContainerTask
@@ -94,11 +94,11 @@ class DockerRunTest : GradleProjectTest() {
       
       tasks {
         register<ContainerTask>("alwaysFail") {
-          dockerPull { image = "alpine:latest" }
-          dockerRun {
+          pullImage { image = "alpine:latest" }
+          runContainer {
             image = "alpine:latest"
             entrypoint = "cat"
-            args = arrayOf("/file-that-does-not-exist")
+            cmd = listOf("/file-that-does-not-exist")
           }
         }
       }
@@ -118,7 +118,7 @@ class DockerRunTest : GradleProjectTest() {
   }
 
   @Test
-  fun `dockerRun streams stdout and stderr separately`() {
+  fun `runContainer streams stdout and stderr separately`() {
     buildGradleKtsFile.appendLine(
       """
       import dev.codebandits.container.gradle.tasks.ContainerTask
@@ -129,11 +129,11 @@ class DockerRunTest : GradleProjectTest() {
       
       tasks {
         register<ContainerTask>("outputTest") {
-          dockerPull { image = "alpine:latest" }
-          dockerRun {
+          pullImage { image = "alpine:latest" }
+          runContainer {
             image = "alpine:latest"
             entrypoint = "sh"
-            args = arrayOf(
+            cmd = listOf(
               "-c",
               "echo 'wonderful' && echo 'oh no' >&2",
             )
@@ -166,7 +166,7 @@ class DockerRunTest : GradleProjectTest() {
   }
 
   @Test
-  fun `dockerRun uses a provided workdir`() {
+  fun `runContainer uses a provided workdir`() {
     buildGradleKtsFile.appendLine(
       """
       import dev.codebandits.container.gradle.tasks.ContainerTask
@@ -177,16 +177,16 @@ class DockerRunTest : GradleProjectTest() {
       
       tasks {
         register<ContainerTask>("secretDecoder") {
-          dockerPull { image = "alpine:latest" }
-          dockerRun {
+          pullImage { image = "alpine:latest" }
+          runContainer {
             image = "alpine:latest"
             entrypoint = "sh"
-            args = arrayOf(
+            cmd = listOf(
               "-c",
               "printf 'Be sure to drink your Ovaltine' > secret-message.txt",
             )
             workdir = "/workdir"
-            volumes = arrayOf(
+            volumes = listOf(
               "${'$'}{layout.projectDirectory}:/workdir",
             )
           }

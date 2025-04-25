@@ -13,25 +13,25 @@ import strikt.assertions.isEqualTo
 
 class VersionCompatabilityTest : GradleProjectTest() {
 
-  @ParameterizedTest(name = "run dockerRun using docker {0} java {1} gradle {2}")
+  @ParameterizedTest(name = "run runContainer using docker {0} java {1} gradle {2}")
   @CsvSource(
     "27, TEMURIN_21, 8.13",
     "27, TEMURIN_21, 8.10.2",
     "26, OPENJDK_17, 7.6.4",
   )
-  fun `run dockerRun`(dockerVersion: String, javaVersion: JavaVersion, gradleVersion: String) {
+  fun `run runContainer`(dockerVersion: String, javaVersion: JavaVersion, gradleVersion: String) {
     setupPluginLibsDir()
     buildGradleFile.configureBuildGradlePluginFromLibsDir()
     buildGradleFile.appendLine(
       """
       tasks.register('helloWorld', ContainerTask) {
-        dockerPull {
+        pullImage {
           it.image.set('alpine:latest')
         }
-        dockerRun {
+        runContainer {
           it.image.set('alpine:latest')
           it.entrypoint.set('echo')
-          it.args.set(['Hello, world!'] as String[])
+          it.cmd.set(['Hello, world!'])
         }
       }
       """.trimIndent()

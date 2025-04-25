@@ -8,10 +8,10 @@ import strikt.api.expectThat
 import strikt.assertions.isEqualTo
 import strikt.assertions.isNotNull
 
-class DockerRunDeferredConfigurationEvaluationTest : GradleProjectTest() {
+class RunContainerDeferredConfigurationEvaluationTest : GradleProjectTest() {
 
   @Test
-  fun `dockerRun configuration evaluation is deferred`() {
+  fun `runContainer configuration evaluation is deferred`() {
     buildGradleKtsFile.appendLine(
       """
       import dev.codebandits.container.gradle.tasks.ContainerTask
@@ -23,7 +23,7 @@ class DockerRunDeferredConfigurationEvaluationTest : GradleProjectTest() {
       tasks {
         register<ContainerTask>("notReady") {
           val imageProvider = project.provider<String> { TODO() }
-          dockerRun {
+          runContainer {
             image = imageProvider.get()
           }
         }

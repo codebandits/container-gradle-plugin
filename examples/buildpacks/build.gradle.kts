@@ -10,17 +10,17 @@ tasks {
     inputs.file("index.html")
     inputs.file("project.toml")
     container.outputs.localImage("my-image:latest")
-    dockerPull {
+    pullImage {
       image = "buildpacksio/pack:latest"
     }
-    dockerRun {
+    runContainer {
       image = "buildpacksio/pack:latest"
-      args = arrayOf(
+      cmd = listOf(
         "build", "my-image:latest",
         "--builder", "paketobuildpacks/builder-jammy-base:latest",
       )
       workdir = "/workdir"
-      volumes = arrayOf(
+      volumes = listOf(
         "${layout.projectDirectory}:/workdir",
         "/var/run/docker.sock:/var/run/docker.sock:ro",
       )

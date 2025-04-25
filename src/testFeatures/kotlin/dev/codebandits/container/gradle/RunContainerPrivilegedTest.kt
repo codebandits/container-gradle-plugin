@@ -8,10 +8,10 @@ import strikt.api.expectThat
 import strikt.assertions.isEqualTo
 import strikt.assertions.isNotNull
 
-class DockerRunPrivilegedTest : GradleProjectTest() {
+class RunContainerPrivilegedTest : GradleProjectTest() {
 
   @Test
-  fun `dockerRun privileged is not set`() {
+  fun `runContainer privileged is not set`() {
     buildGradleKtsFile.appendLine(
       """
       import dev.codebandits.container.gradle.tasks.ContainerTask
@@ -22,11 +22,11 @@ class DockerRunPrivilegedTest : GradleProjectTest() {
       
       tasks {
         register<ContainerTask>("accessMemory") {
-          dockerPull { image = "alpine:latest" }
-          dockerRun {
+          pullImage { image = "alpine:latest" }
+          runContainer {
             image = "alpine:latest"
             entrypoint = "ls"
-            args = arrayOf("/dev/mem")
+            cmd = listOf("/dev/mem")
           }
         }
       }
@@ -43,7 +43,7 @@ class DockerRunPrivilegedTest : GradleProjectTest() {
   }
 
   @Test
-  fun `dockerRun privileged is set`() {
+  fun `runContainer privileged is set`() {
     buildGradleKtsFile.appendLine(
       """
       import dev.codebandits.container.gradle.tasks.ContainerTask
@@ -54,11 +54,11 @@ class DockerRunPrivilegedTest : GradleProjectTest() {
       
       tasks {
         register<ContainerTask>("accessMemory") {
-          dockerPull { image = "alpine:latest" }
-          dockerRun {
+          pullImage { image = "alpine:latest" }
+          runContainer {
             image = "alpine:latest"
             entrypoint = "ls"
-            args = arrayOf("/dev/mem")
+            cmd = listOf("/dev/mem")
             privileged = true
           }
         }

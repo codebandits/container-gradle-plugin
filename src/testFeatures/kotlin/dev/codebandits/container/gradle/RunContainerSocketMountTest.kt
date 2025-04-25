@@ -9,10 +9,10 @@ import strikt.assertions.contains
 import strikt.assertions.isEqualTo
 import strikt.assertions.isNotNull
 
-class DockerRunSocketMountTest : GradleProjectTest() {
+class RunContainerSocketMountTest : GradleProjectTest() {
 
   @Test
-  fun `dockerRun volumes can be used to mount the docker socket`() {
+  fun `runContainer volumes can be used to mount the docker socket`() {
     buildGradleKtsFile.appendLine(
       """
       import dev.codebandits.container.gradle.tasks.ContainerTask
@@ -23,12 +23,12 @@ class DockerRunSocketMountTest : GradleProjectTest() {
       
       tasks {
         register<ContainerTask>("dockerVersion") {
-          dockerPull { image = "curlimages/curl:latest" }
-          dockerRun {
+          pullImage { image = "curlimages/curl:latest" }
+          runContainer {
             image = "curlimages/curl:latest"
             user = "root"
-            args = arrayOf("--unix-socket", "/var/run/docker.sock", "-sS", "http://./version")
-            volumes = arrayOf(
+            cmd = listOf("--unix-socket", "/var/run/docker.sock", "-sS", "http://./version")
+            volumes = listOf(
               "/var/run/docker.sock:/var/run/docker.sock:ro",
             )
           }

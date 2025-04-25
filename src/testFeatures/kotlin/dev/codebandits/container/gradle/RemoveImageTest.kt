@@ -7,15 +7,15 @@ import org.junit.jupiter.api.Test
 import strikt.api.expectThat
 import strikt.assertions.contains
 import strikt.assertions.isEqualTo
+import strikt.assertions.isFalse
 import strikt.assertions.isNotNull
-import strikt.assertions.isTrue
 import java.util.*
 
-class DockerPullTest : GradleProjectTest() {
+class RemoveImageTest : GradleProjectTest() {
 
   @Test
-  fun `dockerPull pulls the specified image`() {
-    removeImage("hello-world:latest")
+  fun `removeImage removes the specified image`() {
+    pullImage("hello-world:latest")
 
     buildGradleKtsFile.appendLine(
       """
@@ -26,8 +26,8 @@ class DockerPullTest : GradleProjectTest() {
       }
       
       tasks {
-        register<ContainerTask>("pullImage") {
-          dockerPull {
+        register<ContainerTask>("removeImage") {
+          removeImage {
             image = "hello-world:latest"
           }
         }
@@ -38,18 +38,18 @@ class DockerPullTest : GradleProjectTest() {
     val result = GradleRunner.create()
       .withPluginClasspath()
       .withProjectDir(projectDirectory.toFile())
-      .withArguments("pullImage")
+      .withArguments("removeImage")
       .build()
 
     expectThat(result).and {
-      get { task(":pullImage") }.isNotNull().get { outcome }.isEqualTo(TaskOutcome.SUCCESS)
+      get { task(":removeImage") }.isNotNull().get { outcome }.isEqualTo(TaskOutcome.SUCCESS)
     }
 
-    expectThat(imageExists("hello-world:latest")).isTrue()
+    expectThat(imageExists("hello-world:latest")).isFalse()
   }
 
   @Test
-  fun `dockerPull fails when pulling an image that does not exist`() {
+  fun `removeImage fails when removing an image that does not exist`() {
     buildGradleKtsFile.appendLine(
       """
       import dev.codebandits.container.gradle.tasks.ContainerTask
@@ -59,8 +59,8 @@ class DockerPullTest : GradleProjectTest() {
       }
       
       tasks {
-        register<ContainerTask>("pullImageNotExist") {
-          dockerPull {
+        register<ContainerTask>("removeImageNotExist") {
+          removeImage {
             image = "alpine:${UUID.randomUUID()}"
           }
         }
@@ -71,17 +71,17 @@ class DockerPullTest : GradleProjectTest() {
     val result = GradleRunner.create()
       .withPluginClasspath()
       .withProjectDir(projectDirectory.toFile())
-      .withArguments("pullImageNotExist")
+      .withArguments("removeImageNotExist")
       .buildAndFail()
 
     expectThat(result).and {
-      get { task(":pullImageNotExist") }.isNotNull().get { outcome }.isEqualTo(TaskOutcome.FAILED)
-      get { output }.contains("manifest unknown")
+      get { task(":removeImageNotExist") }.isNotNull().get { outcome }.isEqualTo(TaskOutcome.FAILED)
+      get { output }.contains("No such image")
     }
   }
 
-  private fun removeImage(imageReference: String) {
-    ProcessBuilder("docker", "rmi", "-f", imageReference)
+  private fun pullImage(imageReference: String) {
+    ProcessBuilder("docker", "pull", imageReference)
       .inheritIO()
       .start()
       .waitFor()

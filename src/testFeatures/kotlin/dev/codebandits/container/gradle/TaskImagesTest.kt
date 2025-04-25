@@ -98,13 +98,13 @@ class TaskImagesTest : GradleProjectTest() {
       tasks {
         register<ContainerTask>("buildImage") {
           container.outputs.localImage("$imageReference")
-          dockerPull { image = "docker:dind" }
-          dockerRun {
+          pullImage { image = "docker:dind" }
+          runContainer {
             image = "docker:dind"
             entrypoint = "docker"
-            args = arrayOf("build", "-t", "$imageReference", "." )
+            cmd = listOf("build", "-t", "$imageReference", "." )
             workdir = "/workdir"
-            volumes = arrayOf(
+            volumes = listOf(
               "${'$'}{layout.projectDirectory}:/workdir",
               "/var/run/docker.sock:/var/run/docker.sock:ro",
             )

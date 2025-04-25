@@ -11,25 +11,25 @@ import strikt.assertions.contains
 import strikt.assertions.isEqualTo
 import strikt.assertions.isNotEqualTo
 
-class DockerHostPathTest : GradleProjectTest() {
+class ContainerHostPathTest : GradleProjectTest() {
 
   @Test
-  fun `dockerRun uses a custom socket when dockerHost is set`() {
+  fun `runContainer uses a custom socket when containerHost is set`() {
     setupPluginLibsDir()
     buildGradleKtsFile.configureBuildGradleKtsPluginFromLibsDir()
     buildGradleKtsFile.appendLine(
       """
       tasks {
         register<ContainerTask>("helloWorld") {
-          dockerPull {
+          pullImage {
             image = "alpine:latest"
-            dockerHost = "unix:///var/run/custom.sock"
+            containerHost = "unix:///var/run/custom.sock"
           }
-          dockerRun {
+          runContainer {
             image = "alpine:latest"
             entrypoint = "echo"
-            args = arrayOf("Hello, world!")
-            dockerHost = "unix:///var/run/custom.sock"
+            cmd = listOf("Hello, world!")
+            containerHost = "unix:///var/run/custom.sock"
           }
         }
       }
@@ -58,21 +58,21 @@ class DockerHostPathTest : GradleProjectTest() {
   }
 
   @Test
-  fun `dockerRun fails when a non-existent dockerHost is set`() {
+  fun `runContainer fails when a non-existent containerHost is set`() {
     setupPluginLibsDir()
     buildGradleKtsFile.configureBuildGradleKtsPluginFromLibsDir()
     buildGradleKtsFile.appendLine(
       """
       tasks {
         register<ContainerTask>("echo") {
-          dockerPull {
+          pullImage {
             image = "alpine:latest"
-            dockerHost = "unix:///var/run/custom.sock"
+            containerHost = "unix:///var/run/custom.sock"
           }
-          dockerRun {
+          runContainer {
             image = "alpine:latest"
             entrypoint = "echo"
-            dockerHost = "unix:///wrong/path/to/docker.sock"
+            containerHost = "unix:///wrong/path/to/docker.sock"
           }
         }
       }

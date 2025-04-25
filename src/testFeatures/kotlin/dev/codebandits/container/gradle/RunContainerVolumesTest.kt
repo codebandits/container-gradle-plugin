@@ -12,10 +12,10 @@ import kotlin.io.path.absolutePathString
 import kotlin.io.path.createDirectory
 import kotlin.io.path.createFile
 
-class DockerRunVolumesTest : GradleProjectTest() {
+class RunContainerVolumesTest : GradleProjectTest() {
 
   @Test
-  fun `dockerRun mounts a provided file`() {
+  fun `runContainer mounts a provided file`() {
     val inputFile = projectDirectory.resolve("input.txt").createFile()
     inputFile.appendLine("wild horses")
 
@@ -29,12 +29,12 @@ class DockerRunVolumesTest : GradleProjectTest() {
       
       tasks {
         register<ContainerTask>("readInput") {
-          dockerPull { image = "alpine:latest" }
-          dockerRun {
+          pullImage { image = "alpine:latest" }
+          runContainer {
             image = "alpine:latest"
             entrypoint = "cat"
-            args = arrayOf("/inputs/input.txt")
-            volumes = arrayOf(
+            cmd = listOf("/inputs/input.txt")
+            volumes = listOf(
               "${inputFile.absolutePathString()}:/inputs/input.txt",
             )
           }
@@ -56,7 +56,7 @@ class DockerRunVolumesTest : GradleProjectTest() {
   }
 
   @Test
-  fun `dockerRun mounts a provided directory`() {
+  fun `runContainer mounts a provided directory`() {
     val inputDirectory = projectDirectory.resolve("inputs").createDirectory()
     inputDirectory.resolve("input.txt").createFile().appendLine("wild horses")
 
@@ -70,12 +70,12 @@ class DockerRunVolumesTest : GradleProjectTest() {
       
       tasks {
         register<ContainerTask>("readInput") {
-          dockerPull { image = "alpine:latest" }
-          dockerRun {
+          pullImage { image = "alpine:latest" }
+          runContainer {
             image = "alpine:latest"
             entrypoint = "cat"
-            args = arrayOf("/inputs/input.txt")
-            volumes = arrayOf(
+            cmd = listOf("/inputs/input.txt")
+            volumes = listOf(
               "${inputDirectory.absolutePathString()}:/inputs",
             )
           }
@@ -97,7 +97,7 @@ class DockerRunVolumesTest : GradleProjectTest() {
   }
 
   @Test
-  fun `dockerRun mounts multiple volumes`() {
+  fun `runContainer mounts multiple volumes`() {
     val input1Directory = projectDirectory.resolve("input-1").createDirectory()
     input1Directory.resolve("input.txt").createFile().appendLine("wild horses")
     val input2Directory = projectDirectory.resolve("input-2").createDirectory()
@@ -115,12 +115,12 @@ class DockerRunVolumesTest : GradleProjectTest() {
       
       tasks {
         register<ContainerTask>("inspectInputs") {
-          dockerPull { image = "alpine:latest" }
-          dockerRun {
+          pullImage { image = "alpine:latest" }
+          runContainer {
             image = "alpine:latest"
             entrypoint = "sh"
-            args = arrayOf("-c", "tree /inputs && find /inputs -type f -exec cat {} +")
-            volumes = arrayOf(
+            cmd = listOf("-c", "tree /inputs && find /inputs -type f -exec cat {} +")
+            volumes = listOf(
               "${input1Directory.absolutePathString()}:/inputs/input-1",
               "${input2Directory.absolutePathString()}:/inputs/input-2",
               "${input3File.absolutePathString()}:/inputs/input-3.txt",

@@ -9,10 +9,10 @@ import strikt.assertions.contains
 import strikt.assertions.isEqualTo
 import strikt.assertions.isNotNull
 
-class DockerRunUserTest : GradleProjectTest() {
+class RunContainerUserTest : GradleProjectTest() {
 
   @Test
-  fun `dockerRun user is set to guest`() {
+  fun `runContainer user is set to guest`() {
     buildGradleKtsFile.appendLine(
       """
       import dev.codebandits.container.gradle.tasks.ContainerTask
@@ -23,8 +23,8 @@ class DockerRunUserTest : GradleProjectTest() {
       
       tasks {
         register<ContainerTask>("whoami") {
-          dockerPull { image = "alpine:latest" }
-          dockerRun {
+          pullImage { image = "alpine:latest" }
+          runContainer {
             image = "alpine:latest"
             user = "guest"
             entrypoint = "whoami"
@@ -47,7 +47,7 @@ class DockerRunUserTest : GradleProjectTest() {
   }
 
   @Test
-  fun `dockerRun user is set to root`() {
+  fun `runContainer user is set to root`() {
     buildGradleKtsFile.appendLine(
       """
       import dev.codebandits.container.gradle.tasks.ContainerTask
@@ -58,8 +58,8 @@ class DockerRunUserTest : GradleProjectTest() {
       
       tasks {
         register<ContainerTask>("whoami") {
-          dockerPull { image = "alpine:latest" }
-          dockerRun {
+          pullImage { image = "alpine:latest" }
+          runContainer {
             image = "alpine:latest"
             user = "root"
             entrypoint = "whoami"

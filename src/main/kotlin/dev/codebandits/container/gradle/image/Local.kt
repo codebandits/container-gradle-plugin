@@ -8,7 +8,7 @@ import com.github.dockerjava.httpclient5.ApacheDockerHttpClient
 
 internal object Local {
   internal fun getImageId(imageReference: String): String? {
-    val dockerClient = Local.createClient()
+    val dockerClient = Local.createDockerClient()
     try {
       val inspectImageResponse = dockerClient.inspectImageCmd(imageReference).exec()
       return inspectImageResponse.id
@@ -17,9 +17,9 @@ internal object Local {
     }
   }
 
-  internal fun createClient(dockerHost: String? = null): DockerClient {
+  internal fun createDockerClient(containerHost: String? = null): DockerClient {
     val config = DefaultDockerClientConfig.createDefaultConfigBuilder()
-      .let { it -> if (dockerHost == null) it else it.withDockerHost(dockerHost) }
+      .let { it -> if (containerHost == null) it else it.withDockerHost(containerHost) }
       .build()
     val httpClient = ApacheDockerHttpClient.Builder().dockerHost(config.dockerHost).build()
     return DockerClientImpl.getInstance(config, httpClient)

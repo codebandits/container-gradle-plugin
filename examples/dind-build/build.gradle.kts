@@ -9,15 +9,15 @@ tasks {
   register<ContainerTask>("buildImage") {
     inputs.file("Dockerfile")
     container.outputs.localImage("my-image:latest")
-    dockerPull {
+    pullImage {
       image = "docker:dind"
     }
-    dockerRun {
+    runContainer {
       image = "docker:dind"
       entrypoint = "docker"
-      args = arrayOf("build", "-t", "my-image:latest", ".")
+      cmd = listOf("build", "-t", "my-image:latest", ".")
       workdir = "/workdir"
-      volumes = arrayOf(
+      volumes = listOf(
         "${layout.projectDirectory}:/workdir",
         "/var/run/docker.sock:/var/run/docker.sock:ro",
       )

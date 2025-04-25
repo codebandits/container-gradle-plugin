@@ -33,16 +33,16 @@ class GroovySyntaxTest : GradleProjectTest() {
       
       tasks.register("buildImage", ContainerTask) {
         container.outputs.localImage("$imageReference")
-        dockerPull { it.image.set("docker:dind") }
-        dockerRun {
+        pullImage { it.image.set("docker:dind") }
+        runContainer {
           it.image.set("docker:dind")
           it.entrypoint.set("docker")
-          it.args.set(["build", "-t", "$imageReference", "."] as String[])
+          it.cmd.set(["build", "-t", "$imageReference", "."])
           it.workdir.set("/workdir")
           it.volumes.set([
             "${'$'}{layout.projectDirectory}:/workdir",
             "/var/run/docker.sock:/var/run/docker.sock:ro",
-          ] as String[])
+          ])
         }
         doLast {
           container.outputs.captureLocalImage("$imageReference")

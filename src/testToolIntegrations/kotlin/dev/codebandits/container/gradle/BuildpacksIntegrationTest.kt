@@ -46,17 +46,17 @@ class BuildpacksIntegrationTest : GradleProjectTest() {
       tasks {
         register<ContainerTask>("buildImage") {
           container.outputs.localImage("$imageReference")
-          dockerPull {
+          pullImage {
             image = "buildpacksio/pack:latest"
           }
-          dockerRun {
+          runContainer {
             image = "buildpacksio/pack:latest"
-            args = arrayOf(
+            cmd = listOf(
               "build", "$imageReference",
               "--builder", "paketobuildpacks/builder-jammy-base:latest"
             )
             workdir = "/workdir"
-            volumes = arrayOf(
+            volumes = listOf(
               "${'$'}{layout.projectDirectory}:/workdir",
               "/var/run/docker.sock:/var/run/docker.sock:ro",
             )

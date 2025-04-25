@@ -33,13 +33,13 @@ import dev.codebandits.container.gradle.tasks.ContainerTask
 tasks {
   register<ContainerTask>("writeHello") {
     container.inputs.registryImage("alpine:latest")
-    dockerPull { image = "alpine:latest" }
-    dockerRun {
+    pullImage { image = "alpine:latest" }
+    runContainer {
       image = "alpine:latest"
       entrypoint = "sh"
-      args = arrayOf("-c", "echo Hello from a container! > message.txt")
+      cmd = listOf("-c", "echo Hello from a container! > message.txt")
       workdir = "/workdir"
-      volumes = arrayOf(
+      volumes = listOf(
         "${layout.projectDirectory}:/workdir",
       )
     }
@@ -56,22 +56,22 @@ import dev.codebandits.container.gradle.tasks.ContainerTask
 tasks {
   register<ContainerTask>("buildWithDocker") {
     inputs.file("Dockerfile")
-    container.outputs.localImage("docker-build-image:latest")
-    dockerPull {
+    container.outputs.localImage("application:latest")
+    pullImage {
       image = "docker:dind"
     }
-    dockerRun {
+    runContainer {
       image = "docker:dind"
       entrypoint = "docker"
-      args = arrayOf("build", "-t", "docker-build-image:latest", ".")
+      cmd = listOf("build", "-t", "application:latest", ".")
       workdir = "/workdir"
-      volumes = arrayOf(
+      volumes = listOf(
         "${layout.projectDirectory}:/workdir",
         "/var/run/docker.sock:/var/run/docker.sock:ro",
       )
     }
     doLast {
-      container.outputs.captureLocalImage("docker-build-image:latest")
+      container.outputs.captureLocalImage("application:latest")
     }
   }
 
@@ -79,17 +79,17 @@ tasks {
     inputs.file("index.html")
     inputs.file("project.toml")
     container.outputs.localImage("pack-build-image:latest")
-    dockerPull {
+    pullImage {
       image = "buildpacksio/pack:latest"
     }
-    dockerRun {
+    runContainer {
       image = "buildpacksio/pack:latest"
-      args = arrayOf(
+      cmd = listOf(
         "build", "pack-build-image:latest",
         "--builder", "paketobuildpacks/builder-jammy-base:latest",
       )
       workdir = "/workdir"
-      volumes = arrayOf(
+      volumes = listOf(
         "${layout.projectDirectory}:/workdir",
         "/var/run/docker.sock:/var/run/docker.sock:ro",
       )

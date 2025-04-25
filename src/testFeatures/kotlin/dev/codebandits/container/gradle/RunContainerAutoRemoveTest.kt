@@ -10,9 +10,9 @@ import java.io.BufferedReader
 import java.io.InputStreamReader
 import java.util.UUID
 
-class DockerRunAutoRemoveTest : GradleProjectTest() {
+class RunContainerAutoRemoveTest : GradleProjectTest() {
   @Test
-  fun `dockerRun removes containers by default`() {
+  fun `runContainer removes containers by default`() {
     val uuid = UUID.randomUUID().toString()
     buildGradleKtsFile.appendLine(
       """
@@ -24,13 +24,13 @@ class DockerRunAutoRemoveTest : GradleProjectTest() {
       
       tasks {
         register<ContainerTask>("printID") {
-          dockerPull { image = "alpine:latest" }
-          dockerRun {
+          pullImage { image = "alpine:latest" }
+          runContainer {
             image = "alpine:latest"
             entrypoint = "echo"
-            args = arrayOf("$uuid")
+            cmd = listOf("$uuid")
             workdir = "/workdir"
-            volumes = arrayOf(
+            volumes = listOf(
               "${'$'}{layout.projectDirectory}:/workdir",
             )
           }
@@ -51,7 +51,7 @@ class DockerRunAutoRemoveTest : GradleProjectTest() {
   }
 
   @Test
-  fun `dockerRun removes containers when autoRemove is true`() {
+  fun `runContainer removes containers when autoRemove is true`() {
     val uuid = UUID.randomUUID().toString()
     buildGradleKtsFile.appendLine(
       """
@@ -63,13 +63,13 @@ class DockerRunAutoRemoveTest : GradleProjectTest() {
       
       tasks {
         register<ContainerTask>("printID") {
-          dockerPull { image = "alpine:latest" }
-          dockerRun {
+          pullImage { image = "alpine:latest" }
+          runContainer {
             image = "alpine:latest"
             entrypoint = "echo"
-            args = arrayOf("$uuid")
+            cmd = listOf("$uuid")
             workdir = "/workdir"
-            volumes = arrayOf(
+            volumes = listOf(
               "${'$'}{layout.projectDirectory}:/workdir",
             )
             autoRemove = true
@@ -91,7 +91,7 @@ class DockerRunAutoRemoveTest : GradleProjectTest() {
   }
 
   @Test
-  fun `dockerRun preserves containers when autoRemove is false`() {
+  fun `runContainer preserves containers when autoRemove is false`() {
     val uuid = UUID.randomUUID().toString()
     buildGradleKtsFile.appendLine(
       """
@@ -103,13 +103,13 @@ class DockerRunAutoRemoveTest : GradleProjectTest() {
       
       tasks {
         register<ContainerTask>("printID") {
-          dockerPull { image = "alpine:latest" }
-          dockerRun {
+          pullImage { image = "alpine:latest" }
+          runContainer {
             image = "alpine:latest"
             entrypoint = "echo"
-            args = arrayOf("$uuid")
+            cmd = listOf("$uuid")
             workdir = "/workdir"
-            volumes = arrayOf(
+            volumes = listOf(
               "${'$'}{layout.projectDirectory}:/workdir",
             )
             autoRemove = false

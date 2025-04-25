@@ -12,10 +12,10 @@ import kotlin.io.path.absolutePathString
 import kotlin.io.path.createDirectory
 import kotlin.io.path.createFile
 
-class DockerRunWorkdirTest : GradleProjectTest() {
+class RunContainerWorkdirTest : GradleProjectTest() {
 
   @Test
-  fun `dockerRun workdir is set to an existing directory`() {
+  fun `runContainer workdir is set to an existing directory`() {
     buildGradleKtsFile.appendLine(
       """
       import dev.codebandits.container.gradle.tasks.ContainerTask
@@ -26,8 +26,8 @@ class DockerRunWorkdirTest : GradleProjectTest() {
       
       tasks {
         register<ContainerTask>("listMedia") {
-          dockerPull { image = "alpine:latest" }
-          dockerRun {
+          pullImage { image = "alpine:latest" }
+          runContainer {
             image = "alpine:latest"
             entrypoint = "ls"
             workdir = "/media"
@@ -56,7 +56,7 @@ class DockerRunWorkdirTest : GradleProjectTest() {
   }
 
   @Test
-  fun `dockerRun workdir is set to a non-existent directory`() {
+  fun `runContainer workdir is set to a non-existent directory`() {
     buildGradleKtsFile.appendLine(
       """
       import dev.codebandits.container.gradle.tasks.ContainerTask
@@ -67,8 +67,8 @@ class DockerRunWorkdirTest : GradleProjectTest() {
       
       tasks {
         register<ContainerTask>("listMedia") {
-          dockerPull { image = "alpine:latest" }
-          dockerRun {
+          pullImage { image = "alpine:latest" }
+          runContainer {
             image = "alpine:latest"
             entrypoint = "pwd"
             workdir = "/windows"
@@ -91,7 +91,7 @@ class DockerRunWorkdirTest : GradleProjectTest() {
   }
 
   @Test
-  fun `dockerRun workdir is set to a volume provided directory`() {
+  fun `runContainer workdir is set to a volume provided directory`() {
     val inputDirectory = projectDirectory.resolve("inputs").createDirectory()
     inputDirectory.resolve("input.txt").createFile().appendLine("wild horses")
 
@@ -105,13 +105,13 @@ class DockerRunWorkdirTest : GradleProjectTest() {
       
       tasks {
         register<ContainerTask>("listMedia") {
-          dockerPull { image = "alpine:latest" }
-          dockerRun {
+          pullImage { image = "alpine:latest" }
+          runContainer {
             image = "alpine:latest"
             entrypoint = "cat"
-            args = arrayOf("input.txt")
+            cmd = listOf("input.txt")
             workdir = "/inputs"
-            volumes = arrayOf(
+            volumes = listOf(
               "${inputDirectory.absolutePathString()}:/inputs",
             )
           }

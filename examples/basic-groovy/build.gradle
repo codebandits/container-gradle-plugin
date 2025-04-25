@@ -5,24 +5,24 @@ plugins {
 }
 
 tasks.register('sayHello', ContainerTask) {
-    dockerPull {
+    pullImage {
         it.image.set('alpine:latest')
     }
-    dockerRun {
+    runContainer {
         it.image.set('alpine:latest')
-        it.args.set(['echo', 'Hello from a container!'] as String[])
+        it.cmd.set(['echo', 'Hello from a container!'])
     }
 }
 
 tasks.register('writeHello', ContainerTask) {
-    dockerPull {
+    pullImage {
         it.image.set('alpine:latest')
     }
-    dockerRun {
+    runContainer {
         it.image.set('alpine:latest')
         it.entrypoint.set('sh')
-        it.args.set(['-c', "echo Hello from a container! > message.txt"] as String[])
+        it.cmd.set(['-c', "echo Hello from a container! > message.txt"])
         it.workdir.set('/workdir')
-        it.volumes.set(["${layout.projectDirectory}:/workdir"] as String[])
+        it.volumes.set(["${layout.projectDirectory}:/workdir"])
     }
 }
