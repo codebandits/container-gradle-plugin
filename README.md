@@ -32,7 +32,7 @@ import dev.codebandits.container.gradle.tasks.ContainerTask
 
 tasks {
   register<ContainerTask>("writeHello") {
-    container.inputs.localImage("alpine:latest")
+    container.inputs.registryImage("alpine:latest")
     dockerPull { image = "alpine:latest" }
     dockerRun {
       image = "alpine:latest"
